@@ -24,7 +24,11 @@ export default function Login() {
   });
   useEffect(() => {
     if (usuario != null) {
-      navigate("/")
+      if(usuario.user.type=="comprador"){
+        navigate("/")
+      }else{
+        navigate("/procesos_activos")
+      }
     }
   }
     , [usuario])

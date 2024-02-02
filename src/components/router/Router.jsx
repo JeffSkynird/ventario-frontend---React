@@ -18,6 +18,15 @@ import Buscador from '../../features/vendedor/Buscador'
 import ProcesosActivos from '../../features/vendedor/ProcesosActivos'
 import ProcesosCerrados from '../../features/vendedor/ProcesosCerrados'
 
+import ProcesosActivosVendedor from '../../features/comprador/ProcesosActivos'
+import ProcesosCerradosVendedor from '../../features/comprador/ProcesosCerrados'
+
+
+import VerProcesoAbierto from '../../features/comprador/VerProcesoAbierto'
+import VerProcesoCerrado from '../../features/comprador/VerProcesoCerrado'
+import Carga from '../../features/comprador/Carga'
+import Productos from '../../features/comprador/Productos'
+
 export default function Router() {
     return (
         <Routes>
@@ -41,6 +50,15 @@ export default function Router() {
             <Route path="/dashboard" element={<RequireAuth><Buscador /></RequireAuth>} />
 
            <Route path="/generation/:id" element={<RequireAuth><Exam /></RequireAuth>} /> 
+
+           <Route path="/procesos_cerrados" element={<RequireAuth><ProcesosCerradosVendedor/></RequireAuth>} />
+           <Route path="/procesos_activos" element={<RequireAuth><ProcesosActivosVendedor/></RequireAuth>} />
+           <Route path="/carga" element={<RequireAuth><Carga/></RequireAuth>} />
+
+           <Route path="/ver_proceso/:id" element={<RequireAuth><VerProcesoAbierto /></RequireAuth>} /> 
+           <Route path="/ver_proceso_cerrado/:id" element={<RequireAuth><VerProcesoCerrado /></RequireAuth>} /> 
+
+           <Route path="/productos" element={<RequireAuth><Productos /></RequireAuth>} /> 
 
 
             <Route path="login" element={<Login />} />

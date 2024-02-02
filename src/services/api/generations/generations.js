@@ -48,6 +48,45 @@ export const obtenerUltimas = async (token) => {
     const { data } = await axios(setting)
     return data;
 };
+ 
+export const obtenerTodos2 = async ({queryKey}) => {
+    //obtiene el token y el id
+
+    const [_, token,selectedTag] = queryKey
+/*     let url = import.meta.env.VITE_API_URL+ "generations"
+    let setting = {
+        method: "GET",
+        url: url,
+        params: {tag_id: selectedTag},
+        headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
+    };
+    const { data } = await axios(setting)
+    console.log(data) */
+    
+    let dataFinal = {
+        data:[
+        {
+            tag:"GREENVIC",
+            status:"SAN FERNANDO",
+            estado:"ME-02020013",
+            visita: "CJ-OOIOOOI",
+            statuss: "CJ ARMAQ 4,50KG GRAPE GWICH",
+            oferta: "5K",
+            formulario:"9.230",
+            fechaRetiro:"20.150",
+            precio:150,
+            ofertaS:"S",
+            imagen:"Si",
+            ventamin:"",
+            restricciones:"001"
+            
+        }
+        
+    ]
+}
+    return dataFinal;
+};
+
 
 export const obtenerTodos = async ({queryKey}) => {
     //obtiene el token y el id
