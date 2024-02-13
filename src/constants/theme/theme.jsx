@@ -5,10 +5,13 @@ import { createTheme } from '@mui/material/styles';
 const lightColors = {
     palette: {
         primary: {
-            main:'#2699fb',
+            main:'#212227',
             contrastText: "#FFF",
         },
-        secondary: blue,
+        secondary: {
+            main:'#076B00',
+            contrastText: "#FFF",
+        },
         mode: 'light',
     },
 }

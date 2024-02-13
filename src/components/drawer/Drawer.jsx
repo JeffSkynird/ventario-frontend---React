@@ -23,7 +23,7 @@ import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined
 import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutlined';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import SecurityOutlinedIcon from '@mui/icons-material/SecurityOutlined';
-import logo from '../../assets/logo.png';
+import leftBackground from '../../assets/images/leftbackground.png';
 import logo2 from '../../assets/logo3.png';
 import { Button, Chip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -55,9 +55,9 @@ function ResponsiveDrawer(props) {
   };
   const indicator = (<img src={indicador} alt="" srcSet="" style={{ width: 10, height: 15 }} />)
   const drawer = (
-    <div style={{ backgroundColor: '#2699fb', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', }}>
+    <div style={{ backgroundColor: '#076001', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', }}>
 
-      <div>
+      <div style={{ backgroundImage: `url(${leftBackground})`, height: '100vh', backgroundSize: 'cover', }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: 10, paddingTop: 35 }}>
           {/* <img src={logo} alt="google" width={'80%'}/> */}
           <Lottie animationData={drawerLottie} style={{ height: 110, cursor: 'pointer' }} onClick={() => navigate("/dashboard")} />
@@ -66,51 +66,60 @@ function ResponsiveDrawer(props) {
         <List>
           {usuario.user.type == "comprador" && (
             <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/dashboard")} style={{ color: location.pathname.includes("/dashboard") || location.pathname == "/" ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/dashboard") || location.pathname == "/" ? 'white' : 'transparent' }}>
-                <ListItemText primary={"Buscador"} />
+              <ListItemButton onClick={() => navigate("/dashboard")}>
+                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/dashboard") || location.pathname == "/" ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/dashboard") || location.pathname == "/" ? 'white' : 'transparent' }}>
+                  <ListItemText primary={"Buscador"} style={{color:location.pathname.includes("/dashboard") || location.pathname == "/" ? '#076B00' : 'white'}}/>
+                </Box>
               </ListItemButton>
             </ListItem>
           )}
           {usuario.user.type == "comprador" && (
             <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/pacientes")} style={{ color: location.pathname.includes("/pacientes") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/pacientes") ? 'white' : 'transparent' }}>
-                <ListItemText primary={"Procesos Activos"} />
+              <ListItemButton onClick={() => navigate("/pacientes")}>
+                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/pacientes") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/pacientes")  ? 'white' : 'transparent' }}>
+                  <ListItemText primary={"Procesos Activos"} style={{color:location.pathname.includes("/pacientes") ? '#076B00' : 'white'}}/>
+                </Box>
               </ListItemButton>
             </ListItem>
           )}
           {usuario.user.type == "comprador" && (
             <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/resultados")} style={{ color: location.pathname.includes("/resultados") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/resultados") ? 'white' : 'transparent' }}>
-                <ListItemText primary={"Procesos Cerrados"} />
+              <ListItemButton onClick={() => navigate("/resultados")}>
+                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/resultados")  ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/resultados")  ? 'white' : 'transparent' }}>
+                  <ListItemText primary={"Procesos Cerrados"} style={{color:location.pathname.includes("/resultados") ? '#076B00' : 'white'}}/>
+                </Box>
               </ListItemButton>
             </ListItem>
           )}
 
           {usuario.user.type == "vendedor" && (
             <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/procesos_activos")} style={{ color: location.pathname.includes("/procesos_activos") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/procesos_activos") ? 'white' : 'transparent' }}>
-                <ListItemText primary={"Procesos activados"} />
+               <ListItemButton onClick={() => navigate("/procesos_activos")}>
+                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/procesos_activos")  ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/procesos_activos")  ? 'white' : 'transparent' }}>
+                  <ListItemText primary={"Procesos Activados"} style={{color:location.pathname.includes("/procesos_activos") ? '#076B00' : 'white'}}/>
+                </Box>
               </ListItemButton>
+             
             </ListItem>
           )}
-           {usuario.user.type == "vendedor" && (
-            <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/procesos_cerrados")} style={{ color: location.pathname.includes("/procesos_cerrados") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/procesos_cerrados") ? 'white' : 'transparent' }}>
-                <ListItemText primary={"Procesos cerrados"} />
-              </ListItemButton>
-            </ListItem>
+          {usuario.user.type == "vendedor" && (
+              <ListItemButton onClick={() => navigate("/procesos_cerrados")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/procesos_cerrados")  ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/procesos_cerrados")  ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Procesos Cerrados"} style={{color:location.pathname.includes("/procesos_cerrados") ? '#076B00' : 'white'}}/>
+              </Box>
+            </ListItemButton>
           )}
-            {usuario.user.type == "vendedor" && (
-            <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/productos")} style={{ color: location.pathname.includes("/productos") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/productos") ? 'white' : 'transparent' }}>
-                <ListItemText primary={"Mis productos"} />
-              </ListItemButton>
-            </ListItem>
+          {usuario.user.type == "vendedor" && (
+             <ListItemButton onClick={() => navigate("/productos")}>
+             <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/productos")  ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/productos")  ? 'white' : 'transparent' }}>
+               <ListItemText primary={"Mis Productos"} style={{color:location.pathname.includes("/productos") ? '#076B00' : 'white'}}/>
+             </Box>
+           </ListItemButton>
           )}
-           {usuario.user.type == "vendedor" && (
-            <ListItem disablePadding>
+          {usuario.user.type == "vendedor" && (
+              <ListItem disablePadding>
               <ListItemButton onClick={() => navigate("/carga")} style={{ color: location.pathname.includes("/carga") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/carga") ? 'white' : 'transparent' }}>
-                <ListItemText primary={"Carga de inventario"} />
+                <ListItemText primary={"Carga de Inventario"} />
               </ListItemButton>
             </ListItem>
           )}
@@ -222,7 +231,7 @@ function ResponsiveDrawer(props) {
       </Box>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+        sx={{ borderTopLeftRadius: 9, flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
       >
         <Toolbar />
         {props.children}

@@ -1,7 +1,7 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { Alert, Button, Chip, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, Paper, TextField, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import fondo from '../../assets/images/background3.jpg'
+//import fondo from '../../assets/images/background3.jpg'
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../hooks/useAuth'
 import { iniciarSesion } from '../../services/api/auth/login';
@@ -13,6 +13,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import Lottie from "lottie-react";
 import NavigateNextOutlinedIcon from '@mui/icons-material/NavigateNextOutlined';
+import fondo from '../../assets/images/background-ventario.png'
+import logo from '../../assets/images/logo.png'
 import { Box } from '@mui/system';
 export default function Login() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
@@ -24,9 +26,9 @@ export default function Login() {
   });
   useEffect(() => {
     if (usuario != null) {
-      if(usuario.user.type=="comprador"){
+      if (usuario.user.type == "comprador") {
         navigate("/")
-      }else{
+      } else {
         navigate("/procesos_activos")
       }
     }
@@ -48,9 +50,9 @@ export default function Login() {
         cargarUsuario(encrypt)
         guardarSession(encrypt);
       }
-  
+
     }, tiempoEspera);
-   
+
   }
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -60,14 +62,16 @@ export default function Login() {
   };
   return (
     <Grid container sx={{ height: '100vh', backgroundSize: 'cover' }}>
-      <Grid item xs={0} md={7} sx={{ display: { xs: 'none', md: 'block' } }}>
-        <Box sx={{ borderBottomRightRadius: 25, height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#2699fb' }}>
+      <Grid item xs={0} md={7} sx={{ display: { xs: 'none', md: 'block' }, backgroundColor: '#00050d' }}>
+        <Box sx={{ borderBottomRightRadius: 25, height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundImage: `url(${fondo})`, height: '100vh', backgroundSize: 'cover' }}>
           {/*           <Lottie animationData={books} style={{ height: '85vh' }} />
  */}
-          <Typography variant="h2" style={{ fontWeight: 'bold', color: 'white', letterSpacing: 18 }}>Ventario</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <img src={logo} alt="" srcset="" style={{ width: '60%', height: '30%' }} />
+          </Box>
 
           <div style={{ position: 'absolute', bottom: 10, }}>
-            <Typography style={{ color: 'white', textAlign: 'center' }} color="initial">Copyright 0 2023 by VENTARIO</Typography>
+            <Typography style={{ color: 'white', textAlign: 'center' }} color="initial">Copyright © 2023 by VENTARIO</Typography>
             <Typography style={{ color: 'white', textAlign: 'center' }} color="initial">
               All rights reserved</Typography>
           </div>
@@ -75,25 +79,24 @@ export default function Login() {
 
 
       </Grid>
-      <Grid item xs={12} md={5} sx={{ backgroundColor: '#ceeaff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Grid item xs={12} md={5} sx={{ backgroundColor: '#F2F7F2', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Grid container spacing={2} >
           <Grid item xs={12}>
 
-            <Typography variant="h3" sx={{ textAlign: 'center', color: '#2699fb' }}>
-              Iniciar Sesión
-            </Typography>
+
             {/*      <Typography variant="body1" sx={{ textAlign: 'center' }}>
 Acceso exclusivo con membresía
 </Typography> */}
           </Grid>
           <Grid item xs={12} >
-            <Paper style={{ padding: 50, marginRight: '20%', marginLeft: '20%', }}>
+            <Paper style={{ marginRight: '20%', marginLeft: '20%', }}>
+              <Box sx={{ backgroundColor: '#076B00',borderTopLeftRadius:3,borderTopRightRadius:3,padding:2 }}>
+                <Typography variant="h4" sx={{ textAlign: 'center', color: '#FFF' }}>
+                  Iniciar Sesión
+                </Typography>
+              </Box>
 
-              <Grid container spacing={2} >
-                {/*  <Grid item xs={12}>
-              <Alert severity="info">Si no tienes cuenta registrate desde aquí eligiendo un plan</Alert>
-
-            </Grid> */}
+              <Grid container spacing={2} sx={{ padding: 5 }}>
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
@@ -143,6 +146,7 @@ Acceso exclusivo con membresía
                   <Button
                     onClick={handleSubmit(entrar)}
                     fullWidth
+                    sx={{ borderRadius: 9 }}
                     variant="contained"
                     color="primary"
                   >
@@ -154,8 +158,8 @@ Acceso exclusivo con membresía
                   <Button
                     //onClick={handleSubmit(entrar)}
                     fullWidth
-                    variant="flat"
-                    color="primary"
+                    variant="text"
+                    color="secondary"
                   >
                     Recuperar contraseña
                   </Button>

@@ -189,7 +189,7 @@ export default function index() {
                 }
                 {
                   carga == false && (
-                    <Button style={{ marginTop: 10 }} component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+                    <Button style={{ marginTop: 10, borderRadius: 9 }} component="label" variant="contained" startIcon={<CloudUploadIcon />}>
                       Subir archivo
                       <input style={{visibility:'hidden',whiteSpace:'nowrap',width:0,    overflow: 'hidden',}}  onChange={handleCapture} type="file" name="" id="" />
                     
@@ -200,7 +200,7 @@ export default function index() {
 
                 {
                   carga == true && (
-                    <Button style={{ marginTop: 10 }} component="label" variant="outlined" onClick={()=>setCarga(false)}>
+                    <Button style={{ marginTop: 10, borderRadius: 9 }} component="label" variant="outlined" onClick={()=>setCarga(false)}>
                       Cerrar
                     </Button>
                   )

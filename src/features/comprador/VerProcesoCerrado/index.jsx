@@ -96,6 +96,7 @@ export default function index(props) {
               <Grid item xs={2} style={{ display: 'flex', gap: 10, flexDirection: 'column', justifyContent: 'center' }}>
                 <Button
                   onClick={() => setOpen2(true)}
+                  sx={{ borderRadius: 9 }}
 
                   fullWidth
                   variant="contained"
@@ -105,6 +106,8 @@ export default function index(props) {
                   Responder oferta
                 </Button>
                 <Button
+                  sx={{ borderRadius: 9 }}
+
                   onClick={() => setOpen3(true)}
                   fullWidth
                   variant="contained"

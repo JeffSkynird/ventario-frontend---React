@@ -103,6 +103,7 @@ export default function index(props) {
                 <Button
                   onClick={() => setOpen(true)}
                   fullWidth
+                  sx={{ borderRadius: 9 }}
                   variant="contained"
                   color="primary"
                 >
@@ -112,7 +113,7 @@ export default function index(props) {
                 </Button>
                 <Button
                   onClick={() => setOpen2(true)}
-
+                  sx={{ borderRadius: 9 }}
                   fullWidth
                   variant="contained"
                   color="primary"
@@ -121,7 +122,7 @@ export default function index(props) {
                   {!state?.isEdited && (" Programe una visita")}
                 </Button>
                 <Button
-                  style={{ display: state?.isEdited ? "none" : "inline" }}
+                  style={{ display: state?.isEdited ? "none" : "inline",borderRadius: 9  }}
                   onClick={() => setOpen3(true)}
                   fullWidth
                   variant="contained"
