@@ -30,8 +30,10 @@ export default function Login() {
     if (usuario != null) {
       if (usuario.user.type == "comprador") {
         navigate("/")
-      } else {
+      } else if(usuario.user.type =="vendedor"){
         navigate("/activos")
+      } else if(usuario.user.type =="admin"){
+        navigate('/datos')
       }
     }
   }
@@ -66,7 +68,7 @@ export default function Login() {
   return (
     <Grid container sx={{ height: '100vh', backgroundSize: 'cover' }}>
       <Grid item xs={0} md={7} sx={{ display: { xs: 'none', md: 'block' }, backgroundColor: '#00050d' }}>
-        <Box sx={{ borderBottomRightRadius: 25, height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundImage: `url(${fondo})`, height: '100vh', backgroundSize: 'cover' }}>
+        <Box sx={{ borderBottomRightRadius: 25, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundImage: `url(${fondo})`, height: '100vh', backgroundSize: 'cover' }}>
           {/*           <Lottie animationData={books} style={{ height: '85vh' }} />
  */}
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

@@ -1,29 +1,17 @@
 import React, { Fragment, useState } from 'react'
-import { useQuery } from 'react-query'
-import { eliminarUsuario, obtenerUsuarios } from '../../services/api/users/users'
-import Button from '@mui/material/Button'
-import { useAuth } from '../../hooks/useAuth';
-import { cerrarSesion } from '../../services/api/auth/login';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import Table from '../../components/table/Table'
+import { useAuth } from '../../../hooks/useAuth';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import Lottie from "lottie-react";
 
 import { Alert, Avatar, Box, Breadcrumbs, Card, CardContent, Chip, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Typography } from '@mui/material';
 import Link from '@mui/material/Link';
-import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { useNavigate } from 'react-router-dom';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import noValue from '../../assets/noValue.svg'
-import BarVertical from './components/BarVertical'
-import PieChart from './components/PieChart'
 import { useEffect } from 'react';
 import RotateLeftOutlinedIcon from '@mui/icons-material/RotateLeftOutlined';
-import { obtenerKpis, obtenerUltimas } from '../../services/api/generations/generations';
+import { obtenerKpis, obtenerUltimas } from '../../../services/api/generations/generations';
 import InsertChartOutlinedIcon from '@mui/icons-material/InsertChartOutlined';
-import emptyLottie from '../../assets/lottie/empty.json'
+import emptyLottie from '../../../assets/lottie/empty.json'
 
 
 export default function index() {
@@ -35,10 +23,10 @@ export default function index() {
   useEffect(() => {
     const fetching = async () => {
       if (usuario != null) {
-        const dataR = await obtenerUltimas(usuario.token)
-        const kpisR = await obtenerKpis(usuario.token)
-        setData(dataR.data)
-        setKpis(kpisR.data)
+        /*  const dataR = await obtenerUltimas(usuario.token)
+          const kpisR = await obtenerKpis(usuario.token)
+          setData(dataR.data)
+          setKpis(kpisR.data) */
       }
     }
     fetching()
@@ -67,7 +55,7 @@ export default function index() {
 
         <Grid item xs={12} md={12} style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h5" >
-            Dashboard
+            Datos
           </Typography>
 
         </Grid>
@@ -260,11 +248,11 @@ export default function index() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} md={12} >
-              <Typography variant="body1" style={{ fontWeight: 'bold', display: 'flex', justifyContent: 'space-between' }}>
-                Historial accesos por comprador (no incluye oferta/visita) <Chip label={data.length} />
+            <Grid item xs={12} md={12} style={{  display: 'flex', justifyContent: 'space-between' }} >
+              <Typography variant="body1" style={{ fontWeight: 'bold'}}>
+                Historial accesos por comprador (no incluye oferta/visita)
               </Typography>
-
+              <Chip label={data.length} />
             </Grid>
             {
               data.length == 0 && (

@@ -11,10 +11,12 @@ export const iniciarSesion = async (obj) => {
     };
     const { data } = await axios(setting) */
     let rol = "comprador";
-    if(obj.email=="admin@gmail.com"){
+    if(obj.email=="commprador@gmail.com"){
          rol = "comprador";
-    }else{
+    }else if(obj.email=="vendedor@gmail.com"){
         rol="vendedor";
+    }else if(obj.email=="admin@gmail.com"){
+        rol="admin";
     }
 
     let datos = {

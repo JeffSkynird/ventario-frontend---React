@@ -132,8 +132,6 @@ export default function index() {
       borderRadius: '5px',
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
       cursor: 'pointer',
-      height:'180px',
-      overflowY:'auto',
     },
     imageContainer: {
       color: '#fff',
@@ -155,7 +153,7 @@ export default function index() {
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={6} md={4}>
               <TextField
                 variant="outlined"
                 label="Buscador"
@@ -163,7 +161,7 @@ export default function index() {
                 name="Buscador"
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={6} md={2}>
               <FormControl fullWidth >
                 <InputLabel id="demo-simple-select-label">Región</InputLabel>
                 <Select
@@ -179,7 +177,7 @@ export default function index() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={6} md={2}>
               <FormControl fullWidth >
                 <InputLabel id="demo-simple-select-label">Comuna</InputLabel>
                 <Select
@@ -195,7 +193,7 @@ export default function index() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={6} md={2}>
               <FormControl fullWidth >
                 <InputLabel id="demo-simple-select-label">Tipo de producto</InputLabel>
                 <Select
@@ -211,7 +209,7 @@ export default function index() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={12} md={2}>
               <FormControl fullWidth >
                 <InputLabel id="demo-simple-select-label">Industria</InputLabel>
                 <Select
@@ -249,7 +247,7 @@ export default function index() {
           )}
           {!isLoading && (
             <Grid container spacing={1}>
-              <Grid item xs={6} md={4}>
+              <Grid item xs={12} md={4}>
                 <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
@@ -267,7 +265,7 @@ export default function index() {
 
                 </div>
               </Grid>
-              <Grid item xs={6} md={4}>
+              <Grid item xs={12} md={4}>
               <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
@@ -285,7 +283,7 @@ export default function index() {
 
                 </div>
               </Grid>
-              <Grid item xs={6} md={4}>
+              <Grid item xs={12} md={4}>
               <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
@@ -303,7 +301,7 @@ export default function index() {
 
                 </div>
               </Grid>
-              <Grid item xs={6} md={4}>
+              <Grid item xs={12} md={4}>
               <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
@@ -321,7 +319,7 @@ export default function index() {
 
                 </div>
               </Grid>
-              <Grid item xs={6} md={4}>
+              <Grid item xs={12} md={4}>
               <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
@@ -339,7 +337,7 @@ export default function index() {
 
                 </div>
               </Grid>
-              <Grid item xs={6} md={4}>
+              <Grid item xs={12} md={4}>
               <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>

@@ -105,6 +105,8 @@ export const obtenerTodos = async ({queryKey}) => {
     let dataFinal = {
         data:[
         {
+            seller:"Vendedor 1",
+            customer:"Comprador 1",
             tag:"Producto 1",
             status:"2024-02-01 19:44:37",
             estado:"Activo",

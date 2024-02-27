@@ -73,13 +73,13 @@ function ResponsiveDrawer(props) {
           {usuario.user.type == "comprador" && (
             <ListItem disablePadding>
               <ListItemButton onClick={() => navigate("/post_visita")}>
-              <Badge badgeContent={1} color="error"  invisible={!location.pathname.includes("/post_visita")} style={{width:'100%'}}>
+                <Badge badgeContent={1} color="error" invisible={!location.pathname.includes("/post_visita")} style={{ width: '100%' }}>
 
-                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/post_visita") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/post_visita") ? 'white' : 'transparent' }}>
+                  <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/post_visita") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/post_visita") ? 'white' : 'transparent' }}>
 
-                      <ListItemText primary={"Post visita"} style={{ color: location.pathname.includes("/post_visita") ? '#076B00' : 'white' }} />
+                    <ListItemText primary={"Post visita"} style={{ color: location.pathname.includes("/post_visita") ? '#076B00' : 'white' }} />
 
-                </Box>
+                  </Box>
                 </Badge>
 
               </ListItemButton>
@@ -144,6 +144,56 @@ function ResponsiveDrawer(props) {
               </Box>
             </ListItemButton>
           )}
+
+          {usuario.user.type == "admin" && (
+            <ListItemButton onClick={() => navigate("/datos")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/datos") || location.pathname == "/" ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/datos") || location.pathname == "/" ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Datos"} style={{ color: location.pathname.includes("/datos") || location.pathname == "/" ? '#076B00' : 'white' }} />
+              </Box>
+            </ListItemButton>
+          )}
+          {usuario.user.type == "admin" && (
+            <ListItemButton onClick={() => navigate("/autorizaciones")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/autorizaciones") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/autorizaciones") ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Autorizaciones"} style={{ color: location.pathname.includes("/autorizaciones") ? '#076B00' : 'white' }} />
+              </Box>
+            </ListItemButton>
+          )}
+          {usuario.user.type == "admin" && (
+            <ListItemButton onClick={() => navigate("/bodegas")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/bodegas") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/bodegas") ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Bodegas"} style={{ color: location.pathname.includes("/bodegas") ? '#076B00' : 'white' }} />
+              </Box>
+            </ListItemButton>
+          )}
+          {usuario.user.type == "admin" && (
+            <ListItemButton onClick={() => navigate("/empresas")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/empresas") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/empresas") ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Empresas"} style={{ color: location.pathname.includes("/empresas") ? '#076B00' : 'white' }} />
+              </Box>
+            </ListItemButton>
+          )}
+          {usuario.user.type == "admin" && (
+            <ListItemButton onClick={() => navigate("/usuarios")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/usuarios") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/usuarios") ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Usuarios"} style={{ color: location.pathname.includes("/usuarios") ? '#076B00' : 'white' }} />
+              </Box>
+            </ListItemButton>
+          )}
+          {usuario.user.type == "admin" && (
+            <ListItemButton onClick={() => navigate("/configuraciones")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/configuraciones") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/configuraciones") ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Configuraciones"} style={{ color: location.pathname.includes("/configuraciones") ? '#076B00' : 'white' }} />
+              </Box>
+            </ListItemButton>
+          )}
+          {/*    {usuario.user.type == "admin" && (
+            <ListItemButton onClick={() => navigate("/restricciones")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/restricciones") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/restricciones") ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Restricciones"} style={{ color: location.pathname.includes("/restricciones") ? '#076B00' : 'white' }} />
+              </Box>
+            </ListItemButton>
+          )} */}
         </List>
 
       </div>

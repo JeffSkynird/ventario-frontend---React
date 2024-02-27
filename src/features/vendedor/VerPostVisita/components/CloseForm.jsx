@@ -18,10 +18,12 @@ import { DataGrid } from '@mui/x-data-grid';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import AddIcon from '@mui/icons-material/Add';
 import ModalProduct from './ModalProduct'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 export default function Form(props) {
     const { state } = useLocation();
     const { mostrarLoader, mostrarNotificacion, usuario } = useAuth()
-    const [open,setOpen] = React.useState(false)
+    const [open, setOpen] = React.useState(false)
     const [datos, setDatos] = useState([{
         value: 0,
         id: 1,
@@ -171,7 +173,7 @@ export default function Form(props) {
             field: 'unit',
             headerName: 'Unidades',
             width: 150,
-            editable:true,
+            editable: true,
             valueGetter: (params) =>
                 params.row.unit
         },
@@ -255,11 +257,11 @@ export default function Form(props) {
     }
     return (
         <Grid container spacing={2} >
-               <ModalProduct open={open} setOpen={setOpen}
+            <ModalProduct open={open} setOpen={setOpen}
 
-                        />
+            />
             <Grid item xs={12}>
-                <Typography  sx={{fontWeight:'bold'}}>Formulario de cierre</Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>Formulario de cierre</Typography>
             </Grid>
             <Grid item xs={12}>
                 <Grid container spacing={1}>
@@ -301,6 +303,21 @@ export default function Form(props) {
                         //onChange={}
 
                         />
+                        <Grid item xs={12}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns}   >
+                                <DatePicker
+                                    label="Fecha de nacimiento  "
+                                  /*   value={borndate}
+                                    onChange={(newValue) => {
+                                        setBorndate(newValue);
+                                    }} */
+                                    name="born_date"
+                                    disableFuture
+                                    inputFormat="dd/MM/yyyy"
+                                    renderInput={(params) => <TextField style={{ width: '100%' }}  {...params} />}
+                                />
+                            </LocalizationProvider>
+                        </Grid>
                     </Grid>
                     <Grid item xs={12} md={1}>
                         <Tooltip title="Factura">
@@ -315,7 +332,7 @@ export default function Form(props) {
                                 <InventoryIcon />
                             </IconButton>
                         </Tooltip>
-                       
+
                     </Grid>
                 </Grid>
 
@@ -364,7 +381,7 @@ export default function Form(props) {
                 //onChange={}
 
                 />
-                <Button variant="outlined" startIcon={<AddIcon />} onClick={()=>setOpen(true)}
+                <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setOpen(true)}
                 >Agregar producto</Button>
 
             </Grid>

@@ -1,8 +1,14 @@
 import { Route, Routes } from 'react-router-dom'
 import Login from '../../features/Login'
 
-import Users from '../../features/Users'
-import UserForm from '../../features/Users/components/Form'
+import Users from '../../features/admin/Usuarios'
+import UserForm from '../../features/admin/Usuarios/components/Form'
+
+import Company from '../../features/admin/Empresas'
+import CompanyForm from '../../features/admin/Empresas/components/Form'
+
+import Warehouse from '../../features/admin/Bodegas'
+import WarehouseForm from '../../features/admin/Bodegas/components/Form'
 
 import Pacients from '../../features/Pacients'
 import PacientForm from '../../features/Pacients/components/Form'
@@ -29,7 +35,11 @@ import VerProcesoCerrado from '../../features/comprador/VerProcesoCerrado'
 import Carga from '../../features/comprador/Carga'
 import Productos from '../../features/comprador/Productos'
 import VerProductos from '../../features/comprador/VerProductos'
+import Dashboard from  '../../features/admin/Dashboard'
+import VerDatos from  '../../features/admin/VerDatos'
+import Configuraciones from  '../../features/admin/Configuraciones'
 
+import Autorizaciones from '../../features/admin/Autorizaciones'
 
 export default function Router() {
     return (
@@ -37,8 +47,16 @@ export default function Router() {
             <Route path="/" element={<RequireAuth><Buscador/></RequireAuth>} />
             <Route path="/usuarios" element={<RequireAuth><Users/></RequireAuth>} />
             <Route path="/usuarios/crear" element={<RequireAuth><UserForm/></RequireAuth>} />
-            <Route path="/usuarios/editar" element={<RequireAuth><UserForm/></RequireAuth>} />
+            <Route path="/usuarios/:id" element={<RequireAuth><UserForm/></RequireAuth>} />
           
+            <Route path="/bodegas" element={<RequireAuth><Warehouse/></RequireAuth>} />
+            <Route path="/bodegas/crear" element={<RequireAuth><WarehouseForm/></RequireAuth>} />
+            <Route path="/bodegas/:id" element={<RequireAuth><WarehouseForm/></RequireAuth>} />
+
+            <Route path="/empresas" element={<RequireAuth><Company/></RequireAuth>} />
+            <Route path="/empresas/crear" element={<RequireAuth><CompanyForm/></RequireAuth>} />
+            <Route path="/empresas/:id" element={<RequireAuth><CompanyForm/></RequireAuth>} />
+
             <Route path="/pacientes" element={<RequireAuth><ProcesosActivos/></RequireAuth>} /> 
             <Route path="/pacientes/crear" element={<RequireAuth><PacientForm/></RequireAuth>} />
             <Route path="/pacientes/editar" element={<RequireAuth><PacientForm/></RequireAuth>} />
@@ -67,6 +85,11 @@ export default function Router() {
            <Route path="/productos" element={<RequireAuth><Productos /></RequireAuth>} /> 
            <Route path="/productos/:id" element={<RequireAuth><VerProductos /></RequireAuth>} /> 
 
+           <Route path="/datos" element={<RequireAuth><Dashboard /></RequireAuth>} /> 
+           <Route path="/datos/:id" element={<RequireAuth><VerDatos /></RequireAuth>} /> 
+
+           <Route path="/configuraciones" element={<RequireAuth><Configuraciones /></RequireAuth>} /> 
+           <Route path="/autorizaciones" element={<RequireAuth><Autorizaciones /></RequireAuth>} /> 
 
             <Route path="login" element={<Login />} />
             <Route render={() => <Redirect to="/buscador" />} />

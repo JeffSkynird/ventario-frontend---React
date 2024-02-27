@@ -1,0 +1,11 @@
+#chatContainer .MuiButtonBase-root {
+
+    margin-right:5px!IMPORTANT;
+    margin-bottom: 5px!IMPORTANT;
+}
+
+#chatContainer .MuiBox-root:has(>  .MuiButtonBase-root){
+    display: flex!IMPORTANT;
+    flex-direction: row!IMPORTANT;
+    flex-wrap: wrap!IMPORTANT;
+}
