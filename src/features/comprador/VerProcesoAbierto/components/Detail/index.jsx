@@ -1,5 +1,6 @@
-import { Button, Grid, Paper, Typography } from '@mui/material'
+import { Button, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
+import InventoryIcon from '@mui/icons-material/Inventory';
 import './style.css'
 export default function index() {
     const messagesEndRef = useRef(null);
@@ -9,39 +10,39 @@ export default function index() {
         { sender: "Vendedor", message: "Hola, ¿cómo estás?" },
         { sender: "Tú", message: "Estoy bien, gracias. ¿Y tú?" },
         {
-          sender: "Sistema",
-          message: "# oferta editada #",
+            sender: "Sistema",
+            message: "# oferta editada #",
         },
         {
-          sender: "Sistema",
-          message: "A tu oferta le quedan 12 horas",
+            sender: "Sistema",
+            message: "A tu oferta le quedan 12 horas",
         },
-      ]);
-      useEffect(() => {
+    ]);
+    useEffect(() => {
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-      }, [messages]);
-      const [inputValue, setInputValue] = useState("");
-    
-      const handleInputChange = (event) => {
+    }, [messages]);
+    const [inputValue, setInputValue] = useState("");
+
+    const handleInputChange = (event) => {
         setInputValue(event.target.value);
-      };
-    
-      const handleSendMessage = () => {
+    };
+
+    const handleSendMessage = () => {
         if (inputValue) {
-          setMessages([
-            ...messages,
-            { sender: "Tú", message: inputValue },
-          ]);
-          setInputValue("");
+            setMessages([
+                ...messages,
+                { sender: "Tú", message: inputValue },
+            ]);
+            setInputValue("");
         }
-      };
+    };
     return (
         <Grid container spacing={2}>
             <Grid item xs={6} >
                 <Grid container spacing={2}>
                     <Grid item xs={12} >
-                        <Paper style={{ padding: 20, width: '100%', backgroundColor: '#a4d8ff' }}>
-                            <table border="1" style={{ width: '100%', backgroundColor: 'white' }}>
+                        <Paper style={{ padding: 20, width: '100%' }}>
+                            <table border="1" style={{ width: '100%' }}>
                                 <caption style={{ fontWeight: 'bold' }}>Fecha de propuesta de visita</caption>
                                 <tr>
                                     <th>Fecha</th>
@@ -59,9 +60,9 @@ export default function index() {
                         </Paper>
                     </Grid>
                     <Grid item xs={12} >
-                        <Paper style={{ padding: 20, width: '100%', backgroundColor: '#a4d8ff', display: 'flex', gap: 5 }}>
-                            <table border="1" style={{ width: '60%', backgroundColor: 'white' }}>
-                                <caption style={{ fontWeight: 'bold' }}>Oferta enviada</caption>
+                        <Paper style={{ padding: 20, width: '100%', display: 'flex', gap: 5 }}>
+                            <table border="1" style={{ width: '60%', }}>
+                                <caption style={{ fontWeight: 'bold' }}>Oferta recibida</caption>
                                 <tr>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
@@ -83,7 +84,7 @@ export default function index() {
                                     < td > $23.500 </ td >
                                 </tr>
                             </table>
-                            <table border="1" style={{ width: '40%', height: 10, backgroundColor: 'white' }}>
+                            <table border="1" style={{ width: '40%', height: 10 }}>
                                 <caption style={{ fontWeight: 'bold' }}>-</caption>
                                 <tr>
                                     <th>Total Neto</th>
@@ -101,20 +102,20 @@ export default function index() {
                 </Grid>
             </Grid>
             <Grid item xs={6}>
-                <Typography style={{fontWeight:'bold'}}>Mensajes</Typography>
+                <Typography style={{ fontWeight: 'bold' }}>Mensajes</Typography>
                 <div className="chat-container">
                     <div className="chat-messages">
                         {messages.map((message, index) => (
                             <div
                                 key={index}
-                                className={`message ${message.sender === "Tú" ? "sent  message-self" : "received" 
+                                className={`message ${message.sender === "Tú" ? "sent  message-self" : "received"
                                     }  `}
                             >
                                 <div className="message-sender">{message.sender}</div>
                                 <div className="message-content">{message.message}</div>
                             </div>
                         ))}
-                                <div ref={messagesEndRef} />
+                        <div ref={messagesEndRef} />
 
                     </div>
                     <div className="chat-input">
@@ -127,6 +128,52 @@ export default function index() {
                         <Button onClick={handleSendMessage}>Enviar</Button>
                     </div>
                 </div>
+            </Grid>
+
+            <Grid xs={12}>
+
+                <List dense={true} sx={{ height: 150, overflowY: 'auto' }} subheader={
+                    <ListSubheader component="div" id="nested-list-subheader">
+                        Procesos activos del comprador
+                    </ListSubheader>
+                }>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <InventoryIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Producto 1"  secondary="Producto de descripción" />
+                        </ListItemButton>
+
+                    </ListItem>
+                    <ListItem disablePadding>
+
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <InventoryIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Producto 2"  secondary="Producto de descripción"  />
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <InventoryIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Producto 3"   secondary="Producto de descripción"  />
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <InventoryIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Producto 4"   secondary="Producto de descripción" />
+                        </ListItemButton>
+                    </ListItem>
+                </List>
             </Grid>
         </Grid>
     )

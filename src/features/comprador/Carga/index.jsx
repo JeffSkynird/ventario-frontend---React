@@ -92,7 +92,7 @@ export default function index() {
       Cell: (value) => (
         <div style={{ display: 'flex' }}>
           <IconButton aria-label="delete" onClick={() => {
-            navigate('/generation/' + value.row.original.id)
+            navigate('/buscador/' + value.row.original.id)
           }
           }>
             <RemoveRedEyeOutlinedIcon />
@@ -171,7 +171,7 @@ export default function index() {
     <div>
       <Grid container spacing={2} >
         <Grid item xs={12}>
-          <Typography color="initial">Carga de inventario</Typography>
+          <Typography >Carga de inventario</Typography>
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={2}>

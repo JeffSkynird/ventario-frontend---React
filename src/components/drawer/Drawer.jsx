@@ -24,8 +24,10 @@ import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutl
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import SecurityOutlinedIcon from '@mui/icons-material/SecurityOutlined';
 import leftBackground from '../../assets/images/leftbackground.png';
-import logo2 from '../../assets/logo3.png';
-import { Button, Chip } from '@mui/material';
+import logo2 from '../../assets/images/logo-minus.png';
+import avatar from '../../assets/images/avatar.png';
+
+import { Badge, Button, Chip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { removeSession } from '../../services/session/Session';
@@ -58,17 +60,36 @@ function ResponsiveDrawer(props) {
     <div style={{ backgroundColor: '#076001', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', }}>
 
       <div style={{ backgroundImage: `url(${leftBackground})`, height: '100vh', backgroundSize: 'cover', }}>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: 10, paddingTop: 35 }}>
+
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'space-between', paddingTop: 25 }}>
+          <img src={logo2} alt="" style={{ width: 141, height: 47 }} />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: 10, marginTop: 20 }}>
           {/* <img src={logo} alt="google" width={'80%'}/> */}
-          <Lottie animationData={drawerLottie} style={{ height: 110, cursor: 'pointer' }} onClick={() => navigate("/dashboard")} />
+          <img src={avatar} alt="" style={{ width: 80 }} />
           {/* <Typography variant='body2'>Bienvenido, <span style={{fontWeight:'bold',color:'#5E35B1'}}>Jefferson</span> </Typography> */}
         </div>
         <List>
           {usuario.user.type == "comprador" && (
             <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/dashboard")}>
-                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/dashboard") || location.pathname == "/" ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/dashboard") || location.pathname == "/" ? 'white' : 'transparent' }}>
-                  <ListItemText primary={"Buscador"} style={{color:location.pathname.includes("/dashboard") || location.pathname == "/" ? '#076B00' : 'white'}}/>
+              <ListItemButton onClick={() => navigate("/post_visita")}>
+              <Badge badgeContent={1} color="error"  invisible={!location.pathname.includes("/post_visita")} style={{width:'100%'}}>
+
+                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/post_visita") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/post_visita") ? 'white' : 'transparent' }}>
+
+                      <ListItemText primary={"Post visita"} style={{ color: location.pathname.includes("/post_visita") ? '#076B00' : 'white' }} />
+
+                </Box>
+                </Badge>
+
+              </ListItemButton>
+            </ListItem>
+          )}
+          {usuario.user.type == "comprador" && (
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => navigate("/buscador")}>
+                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/buscador") || location.pathname == "/" ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/buscador") || location.pathname == "/" ? 'white' : 'transparent' }}>
+                  <ListItemText primary={"Buscador"} style={{ color: location.pathname.includes("/buscador") || location.pathname == "/" ? '#076B00' : 'white' }} />
                 </Box>
               </ListItemButton>
             </ListItem>
@@ -76,8 +97,8 @@ function ResponsiveDrawer(props) {
           {usuario.user.type == "comprador" && (
             <ListItem disablePadding>
               <ListItemButton onClick={() => navigate("/pacientes")}>
-                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/pacientes") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/pacientes")  ? 'white' : 'transparent' }}>
-                  <ListItemText primary={"Procesos Activos"} style={{color:location.pathname.includes("/pacientes") ? '#076B00' : 'white'}}/>
+                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/pacientes") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/pacientes") ? 'white' : 'transparent' }}>
+                  <ListItemText primary={"Procesos Activos"} style={{ color: location.pathname.includes("/pacientes") ? '#076B00' : 'white' }} />
                 </Box>
               </ListItemButton>
             </ListItem>
@@ -85,8 +106,8 @@ function ResponsiveDrawer(props) {
           {usuario.user.type == "comprador" && (
             <ListItem disablePadding>
               <ListItemButton onClick={() => navigate("/resultados")}>
-                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/resultados")  ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/resultados")  ? 'white' : 'transparent' }}>
-                  <ListItemText primary={"Procesos Cerrados"} style={{color:location.pathname.includes("/resultados") ? '#076B00' : 'white'}}/>
+                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/resultados") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/resultados") ? 'white' : 'transparent' }}>
+                  <ListItemText primary={"Procesos Cerrados"} style={{ color: location.pathname.includes("/resultados") ? '#076B00' : 'white' }} />
                 </Box>
               </ListItemButton>
             </ListItem>
@@ -94,39 +115,43 @@ function ResponsiveDrawer(props) {
 
           {usuario.user.type == "vendedor" && (
             <ListItem disablePadding>
-               <ListItemButton onClick={() => navigate("/procesos_activos")}>
-                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/procesos_activos")  ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/procesos_activos")  ? 'white' : 'transparent' }}>
-                  <ListItemText primary={"Procesos Activados"} style={{color:location.pathname.includes("/procesos_activos") ? '#076B00' : 'white'}}/>
+              <ListItemButton onClick={() => navigate("/activos")}>
+                <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/activos") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/activos") ? 'white' : 'transparent' }}>
+                  <ListItemText primary={"Procesos Activados"} style={{ color: location.pathname.includes("/activos") ? '#076B00' : 'white' }} />
                 </Box>
               </ListItemButton>
-             
+
             </ListItem>
           )}
           {usuario.user.type == "vendedor" && (
-              <ListItemButton onClick={() => navigate("/procesos_cerrados")}>
-              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/procesos_cerrados")  ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/procesos_cerrados")  ? 'white' : 'transparent' }}>
-                <ListItemText primary={"Procesos Cerrados"} style={{color:location.pathname.includes("/procesos_cerrados") ? '#076B00' : 'white'}}/>
+            <ListItemButton onClick={() => navigate("/cerrados")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/cerrados") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/cerrados") ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Procesos Cerrados"} style={{ color: location.pathname.includes("/cerrados") ? '#076B00' : 'white' }} />
               </Box>
             </ListItemButton>
           )}
           {usuario.user.type == "vendedor" && (
-             <ListItemButton onClick={() => navigate("/productos")}>
-             <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/productos")  ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/productos")  ? 'white' : 'transparent' }}>
-               <ListItemText primary={"Mis Productos"} style={{color:location.pathname.includes("/productos") ? '#076B00' : 'white'}}/>
-             </Box>
-           </ListItemButton>
+            <ListItemButton onClick={() => navigate("/productos")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/productos") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/productos") ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Mis Productos"} style={{ color: location.pathname.includes("/productos") ? '#076B00' : 'white' }} />
+              </Box>
+            </ListItemButton>
           )}
           {usuario.user.type == "vendedor" && (
-              <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/carga")} style={{ color: location.pathname.includes("/carga") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/carga") ? 'white' : 'transparent' }}>
-                <ListItemText primary={"Carga de Inventario"} />
-              </ListItemButton>
-            </ListItem>
+            <ListItemButton onClick={() => navigate("/carga")}>
+              <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/carga") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/carga") ? 'white' : 'transparent' }}>
+                <ListItemText primary={"Carga de Inventario"} style={{ color: location.pathname.includes("/carga") ? '#076B00' : 'white' }} />
+              </Box>
+            </ListItemButton>
           )}
         </List>
 
       </div>
-
+      <div style={{ position: 'absolute', bottom: 10, left: 15 }}>
+        <Typography variant="body2" style={{ opacity: 0.6, color: 'white', textAlign: 'center' }} color="initial">Copyright © 2023 by VENTARIO</Typography>
+        <Typography variant="body2" style={{ opacity: 0.6, color: 'white', textAlign: 'center' }} color="initial">
+          All rights reserved</Typography>
+      </div>
     </div>
   );
 
@@ -161,9 +186,8 @@ function ResponsiveDrawer(props) {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          backgroundColor: 'background.paper'
         }}
-        color="default"
+        color="transparent"
         elevation={0}
       >
         <Toolbar>

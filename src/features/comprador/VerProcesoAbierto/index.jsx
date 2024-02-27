@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import { useAuth } from '../../../hooks/useAuth';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { Box, Breadcrumbs, Button, Chip, Grid, IconButton, Paper, Skeleton, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Button, Chip, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, Skeleton, Tab, Tabs, Typography } from '@mui/material';
 import Link from '@mui/material/Link';
 import { useNavigate, useParams } from 'react-router-dom';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -11,6 +11,7 @@ import ModalVisita from './components/ModalVisita'
 import ModalMensaje from './components/ModalMensaje'
 import { useLocation } from 'react-router-dom';
 import Detail from './components/Detail'
+import NumbersIcon from '@mui/icons-material/Numbers';
 export default function index(props) {
   const [page, setPage] = useState(1);
   const { state } = useLocation();
@@ -69,13 +70,13 @@ export default function index(props) {
 
       <Grid container spacing={2} >
         <Grid item xs={12}>
-          <Typography color="initial">Buscador / Nombre del producto</Typography>
+          <Typography >Buscador / Nombre del producto</Typography>
         </Grid>
 
         <Grid item xs={12}>
           <Paper style={{ padding: 20, marginRight: '5%', width: '100%' }}>
             <Grid container  >
-              <Grid item xs={10} style={{ display: 'flex', gap: 30, justifyContent: 'center', }}>
+              <Grid item xs={9} style={{ display: 'flex', gap: 30, justifyContent: 'center', }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <img style={{ height: '50px', width: '50px' }} src="https://m.media-amazon.com/images/I/81x9-laqL0L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
                   <img style={{ height: '50px', width: '50px' }} src="https://m.media-amazon.com/images/I/710M8zAJK8L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
@@ -99,7 +100,7 @@ export default function index(props) {
                   <span>Lorem ipsum dolor sit amet consectetur adipiscing elit mus, massa convallis ac hendrerit malesuada non primis, laoreet aliquet et feugiat senectus accumsan conubia. Quis sem felis vivamus torquent auctor pulvinar pretium luctus eu risus tristique, fringilla facilisis curabitur natoque gravida vulputate primis feugiat dictumst</span>
                 </div>
               </Grid>
-              <Grid item xs={2} style={{ display: 'flex', gap: 10, flexDirection: 'column', justifyContent: 'center' }}>
+              <Grid item xs={3} style={{ display: 'flex', gap: 10, flexDirection: 'column', justifyContent: 'center' }}>
                 <Button
                   onClick={() => setOpen(true)}
                   fullWidth
@@ -107,9 +108,7 @@ export default function index(props) {
                   variant="contained"
                   color="primary"
                 >
-                  {state?.isEdited && ("Editar oferta")}
-                  {!state?.isEdited && ("Haga una oferta")}
-
+                  Responder oferta
                 </Button>
                 <Button
                   onClick={() => setOpen2(true)}
@@ -118,20 +117,50 @@ export default function index(props) {
                   variant="contained"
                   color="primary"
                 >
-                  {state?.isEdited && ("Editar visita")}
-                  {!state?.isEdited && (" Programe una visita")}
+                  Responder visita
                 </Button>
-                <Button
-                  style={{ display: state?.isEdited ? "none" : "inline",borderRadius: 9  }}
-                  onClick={() => setOpen3(true)}
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                >
-                  Enviar un mensaje
-                </Button>
-                <Typography style={{ display: state?.isEdited ? "none" : "inline" }}
-                  variant="caption" color="initial">(Pregunta sobre el producto o pide documentos/fotos aquí</Typography>
+                <List dense={true} sx={{ height: 150, overflowY: 'auto' }} subheader={
+                  <ListSubheader component="div" id="nested-list-subheader">
+                    Lista de cod emp
+                  </ListSubheader>
+                }>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <NumbersIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Cod emp: 34873843434" />
+                    </ListItemButton>
+
+                  </ListItem>
+                  <ListItem disablePadding>
+
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <NumbersIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Cod emp: 34873843434" />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <NumbersIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Cod emp: 34873843434" />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <NumbersIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Cod emp: 34873843434" />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
               </Grid>
             </Grid>
 
@@ -140,15 +169,15 @@ export default function index(props) {
         </Grid>
 
         {!state?.isEdited && (
-          <>
+          <div style={{ backgroundColor: '#b8dca2' }}>
             <Grid item xs={12} style={{ marginTop: 30 }}>
-              <Typography color="initial">Otros productos de la misma empresa</Typography>
+              <Typography color="initial">Otssssros productos de la misma empresa</Typography>
 
             </Grid>
             <Grid item xs={12}>
               <Grid container spacing={1}>
                 <Grid item xs={6} md={4}>
-                  <div style={style.container} onClick={() => navigate('/generation/' + 1)}>
+                  <div style={style.container} onClick={() => navigate('/buscador/' + 1)}>
                     <div style={{ display: 'flex' }}>
                       <div style={style.imageContainer}>
                         <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/81x9-laqL0L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
@@ -212,7 +241,8 @@ export default function index(props) {
 
               </Grid>
 
-            </Grid></>
+            </Grid>
+          </div>
         )}
         {state?.isEdited && (
           <Grid item xs={12} style={{ marginTop: 30 }}>

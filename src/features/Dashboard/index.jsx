@@ -185,7 +185,7 @@ export default function index() {
                             {item.status=="pendiente"?<RotateLeftOutlinedIcon />: <CheckCircleOutlineOutlinedIcon />}
                           </IconButton>
                         }>
-                          <ListItemButton onClick={()=>navigate('/generation/'+item.id)}>
+                          <ListItemButton onClick={()=>navigate('/buscador/'+item.id)}>
                             <ListItemIcon>
                               <Avatar>{index+1}</Avatar>
                             </ListItemIcon>

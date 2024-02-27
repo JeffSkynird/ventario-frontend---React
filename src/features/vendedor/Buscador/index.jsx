@@ -77,7 +77,7 @@ export default function index() {
       Cell: (value) => (
         <div style={{ display: 'flex' }}>
           <IconButton aria-label="delete" onClick={() => {
-            navigate('/generation/' + value.row.original.id)
+            navigate('/buscador/' + value.row.original.id)
           }
           }>
             <RemoveRedEyeOutlinedIcon />
@@ -133,7 +133,7 @@ export default function index() {
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
       cursor: 'pointer',
       height:'180px',
-      overflowY:'auto'
+      overflowY:'auto',
     },
     imageContainer: {
       color: '#fff',
@@ -151,7 +151,7 @@ export default function index() {
     <div>
       <Grid container spacing={2} >
         <Grid item xs={12}>
-          <Typography color="initial">Buscador</Typography>
+          <Typography >Buscador</Typography>
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={2}>
@@ -250,7 +250,7 @@ export default function index() {
           {!isLoading && (
             <Grid container spacing={1}>
               <Grid item xs={6} md={4}>
-                <div style={style.container} onClick={()=>navigate('/generation/'+1)}>
+                <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
                       <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/81x9-laqL0L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
@@ -268,7 +268,7 @@ export default function index() {
                 </div>
               </Grid>
               <Grid item xs={6} md={4}>
-              <div style={style.container} onClick={()=>navigate('/generation/'+1)}>
+              <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
                       <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/710M8zAJK8L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
@@ -286,7 +286,7 @@ export default function index() {
                 </div>
               </Grid>
               <Grid item xs={6} md={4}>
-              <div style={style.container} onClick={()=>navigate('/generation/'+1)}>
+              <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
                       <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/81x9-laqL0L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
@@ -304,7 +304,7 @@ export default function index() {
                 </div>
               </Grid>
               <Grid item xs={6} md={4}>
-              <div style={style.container} onClick={()=>navigate('/generation/'+1)}>
+              <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
                       <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/710M8zAJK8L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
@@ -322,7 +322,7 @@ export default function index() {
                 </div>
               </Grid>
               <Grid item xs={6} md={4}>
-              <div style={style.container} onClick={()=>navigate('/generation/'+1)}>
+              <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
                       <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/81x9-laqL0L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
@@ -340,7 +340,7 @@ export default function index() {
                 </div>
               </Grid>
               <Grid item xs={6} md={4}>
-              <div style={style.container} onClick={()=>navigate('/generation/'+1)}>
+              <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
                   <div style={{ display: 'flex' }}>
                     <div style={style.imageContainer}>
                       <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/710M8zAJK8L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />

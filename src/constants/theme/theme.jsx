@@ -1,5 +1,4 @@
 import { indigo } from '@mui/material/colors';
-import { blue } from '@mui/material/colors';
 import { createTheme } from '@mui/material/styles';
 
 const lightColors = {
@@ -18,8 +17,9 @@ const lightColors = {
 
 const darkColors = {
     palette: {
-        primary: indigo,
-        secondary: blue,
+        primary: {
+            main:'#096102',
+        },
         mode: 'dark',
     },
 }

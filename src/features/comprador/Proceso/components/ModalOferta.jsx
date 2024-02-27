@@ -6,8 +6,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import { asignarTag, crear } from '../../../../services/api/tags/tags';
-import { useAuth } from '../../../../hooks/useAuth';
+import { asignarTag, crear } from '../../../services/api/tags/tags';
+import { useAuth } from '../../../hooks/useAuth';
 import { Box, Checkbox, Chip, FormControlLabel, TextField, Typography } from '@mui/material';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -20,8 +20,6 @@ export default function AlertDialogSlide(props) {
     const { open, setOpen } = props;
     const [name, setName] = React.useState('');
     const [isComplete, setIscomplete] = React.useState(false)
-    const [isConfirm, setIsConfirm] = React.useState(false)
-
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -36,7 +34,6 @@ export default function AlertDialogSlide(props) {
         setTimeout(() => {
             if (isComplete == false) {
                 setIscomplete(true)
-                setIsConfirm(true)
             }
 
             mostrarLoader(false)
@@ -56,16 +53,6 @@ export default function AlertDialogSlide(props) {
 
         handleClose()
     }
-    const rechazar=()=> {
-        setOpen(false)
-        setIscomplete(false)
-        setIsConfirm(false)
-    }
-    const rechazarConfirm = ()=> {
-        setIsConfirm(false)
-        setIscomplete(true)
-
-    }
     return (
         <div>
             <Dialog
@@ -75,9 +62,16 @@ export default function AlertDialogSlide(props) {
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
             >
-               
-                <DialogTitle>Oferta recibida</DialogTitle>
-                  
+                {
+                    props.isEdited && (
+                        <DialogTitle>{!isComplete ? "Editar oferta" : "Oferta editada"}</DialogTitle>
+                    )
+                }
+                {
+                    !props.isEdited && (
+                        <DialogTitle>{!isComplete ? "Oferta" : "Oferta enviada"}</DialogTitle>
+                    )
+                }
                 <DialogContent>
                     {
                         !isComplete && (
@@ -115,35 +109,25 @@ export default function AlertDialogSlide(props) {
                         )
                     }
                     {
-                        isComplete&&isConfirm && (
+                        isComplete && (
                             <DialogContentText id="alert-dialog-slide-description">
-                                Oferta confirmada
+                                {!props.isEdited ? "Lorem ipsum dolor sit amet consectetur adipiscing elit mus, massa convallis ac hendrerit malesuada non primis, laoreet aliquet et feugiat senectus accumsan conubia. Quis sem felis vivamus torquent auctor pulvinar pretium luctus eu risus tristique, fringilla facilisis curabitur natoque gravida vulputate primis feugiat dictumst" : "Cambios guardados"}
                             </DialogContentText>
-                        )
-                    }
-                         {
-                        isComplete&&!isConfirm && (
-                            <React.Fragment>
-                            <DialogContentText id="alert-dialog-slide-description">
-                                Indicanos por favor el motivo del rechazo
-                               
-                            </DialogContentText>
-                             <TextField
-                             multiline
-                             sx={{width:'100%',mt:1}}
-                             rows={4}
-                             placeholder={'Escribir un mensaje'}
-                         />
-                         </React.Fragment>
                         )
                     }
                 </DialogContent>
                 <DialogActions>
-                    <Button style={{ display: isComplete&&!isConfirm ? 'none' : 'inline' }}  onClick={handleClose}>Cerrar</Button>
-                    <Button color='error' style={{ display: isComplete ? 'none' : 'inline' }} onClick={rechazarConfirm}>Rechazar</Button>
-                    <Button color='secondary' style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Confirmar</Button>
-                    <Button color='error' style={{ display: isComplete&&!isConfirm ? 'inline' : 'none' }} onClick={rechazar}>Rechazar</Button>
-
+                    <Button onClick={handleClose}>Cerrar</Button>
+                    {
+                        !props.isEdited && (
+                            <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Generar oferta</Button>
+                        )
+                    }
+                    {
+                        props.isEdited && (
+                            <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Guardar cambios</Button>
+                        )
+                    }
                 </DialogActions>
             </Dialog>
         </div>

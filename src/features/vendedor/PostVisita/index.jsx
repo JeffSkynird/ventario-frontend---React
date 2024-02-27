@@ -48,7 +48,7 @@ export default function index() {
       Cell: (value) => (
         <div style={{display:'flex'}}>
           <IconButton aria-label="delete" onClick={() => {
-            navigate('/activos/'+value.row.original.id, { state:{isEdited:true} })
+            navigate('/post_visita/'+value.row.original.id, { state:{isEdited:true} })
           }
           }>
             <RemoveRedEyeOutlinedIcon />
@@ -71,28 +71,7 @@ export default function index() {
     {
       Header: 'Estados',
       accessor: 'estado',
-    },
-    {
-      Header: 'Visita',
-      accessor: 'visita',
-    },
-    {
-      Header: 'Status',
-      accessor: 'statuss',
-    },
-    {
-      Header: 'Oferta',
-      accessor: 'oferta',
-    },
-    {
-      Header: 'Formulario',
-      accessor: 'formulario',
-      Cell: ({ row }) => ( row.original.tag!=null?<Chip label={"Formulario"+row.original.formulario} color="primary" variant="outlined"/>:<Modal refetch={refetch} obtenerLista={obtenerLista} tags={tags} generation_id={row.original.id}/>)
-    },
-    {
-      Header: 'Fecha de retiro',
-      accessor: 'fechaRetiro',
-    },
+    }
    
   ]
   const breadcrumbs = [
@@ -128,7 +107,7 @@ export default function index() {
     <div>
       <Grid container spacing={2} >
         <Grid item xs={12}>
-          <Typography >Procesos activos</Typography>
+          <Typography>Formularios post visita</Typography>
         </Grid>
       
         <Grid item xs={12} >

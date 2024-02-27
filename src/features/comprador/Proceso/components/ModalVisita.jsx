@@ -6,8 +6,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import { asignarTag, crear } from '../../../../services/api/tags/tags';
-import { useAuth } from '../../../../hooks/useAuth';
+import { asignarTag, crear } from '../../../services/api/tags/tags';
+import { useAuth } from '../../../hooks/useAuth';
 import { Box, Checkbox, Chip, FormControlLabel, TextField, Typography } from '@mui/material';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -20,8 +20,6 @@ export default function AlertDialogSlide(props) {
     const { open, setOpen } = props;
     const [name, setName] = React.useState('');
     const [isComplete, setIscomplete] = React.useState(false)
-    const [isConfirm, setIsConfirm] = React.useState(false)
-
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -36,7 +34,6 @@ export default function AlertDialogSlide(props) {
         setTimeout(() => {
             if (isComplete == false) {
                 setIscomplete(true)
-                setIsConfirm(true)
             }
 
             mostrarLoader(false)
@@ -56,16 +53,6 @@ export default function AlertDialogSlide(props) {
 
         handleClose()
     }
-    const rechazar = () => {
-        setOpen(false)
-        setIscomplete(false)
-        setIsConfirm(false)
-    }
-    const rechazarConfirm = () => {
-        setIsConfirm(false)
-        setIscomplete(true)
-
-    }
     return (
         <div>
             <Dialog
@@ -75,16 +62,23 @@ export default function AlertDialogSlide(props) {
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
             >
-
-                <DialogTitle>Fecha de propuesta de visita</DialogTitle>
-
+                 {
+                    !props.isEdited && (
+                        <DialogTitle>{!isComplete ? "Agendar visita" : "Fecha enviada"}</DialogTitle>
+                        )
+                }
+                 {
+                    props.isEdited && (
+                        <DialogTitle>{!isComplete ? "Editar visita" : "Visita editada"}</DialogTitle>
+                    )
+                }
                 <DialogContent>
                     {
                         !isComplete && (
                             <>
-                                <DialogContentText style={{ display: props.isEdited ? "none" : 'inline' }} id="alert-dialog-slide-description">
+                                <DialogContentText style={{display: props.isEdited?"none":'inline'}}  id="alert-dialog-slide-description">
                                     Lorem ipsum dolor sit amet consectetur adipiscing elit mus Lorem ipsum dolor sit amet consectetur adipiscing elit mus
-                                </DialogContentText><table border="1" style={{ marginTop: 10, width: '100%' }}>
+                                </DialogContentText><table border="1" style={{ marginTop:10,width: '100%' }}>
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Hora</th>
@@ -94,36 +88,34 @@ export default function AlertDialogSlide(props) {
                                             <TextField variant="standard" type="date" name="" id="" />
                                         </td>
                                         <td align='center'>
-                                            <TextField variant="standard" type="time" name="" id="" />
+                                        <TextField variant="standard" type="time" name="" id="" />
 
                                         </td>
                                     </tr>
-                                </table>
-                            </>
-                        )
+                                    </table>
+                                </>
+                                )
                     }
-                    {
-                        isComplete && isConfirm && (
-                            <DialogContentText id="alert-dialog-slide-description">
-                                Visita confirmada                                  </DialogContentText>
+                                {
+                                    isComplete && (
+                                        <DialogContentText id="alert-dialog-slide-description">
+  { !props.isEdited? "Lorem ipsum dolor sit amet consectetur adipiscing elit mus, massa convallis ac hendrerit malesuada non primis, laoreet aliquet et feugiat senectus accumsan conubia. Quis sem felis vivamus torquent auctor pulvinar pretium luctus eu risus tristique, fringilla facilisis curabitur natoque gravida vulputate primis feugiat dictumst":"Cambios guardados"}                                        </DialogContentText>
+                                    )
+                                }
+                            </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cerrar</Button>
+                        {
+                    !props.isEdited && (
+                        <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Agendar</Button>
                         )
-                    }
-                    {
-
-                        isComplete && !isConfirm&&(
-                            <DialogContentText id="alert-dialog-slide-description">
-                                La fecha y hora fue rechaza, por favor ponte de
-                                acuerdo via mensajeria e ingresa la fecha y
-                                hora acordada porque una vez que se acepte
-                                se informarán los datos de la contraparte.    </DialogContentText>
+                }
+                  {
+                    props.isEdited && (
+                        <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Guardar cambios</Button>
                         )
-                    }
-                </DialogContent>
-                <DialogActions>
-                    <Button  onClick={handleClose}>Cerrar</Button>
-                    <Button color='error' style={{ display: isComplete ? 'none' : 'inline' }} onClick={rechazarConfirm}>Rechazar</Button>
-                    <Button color='secondary' style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Confirmar</Button>
-                </DialogActions>
+                }
+                    </DialogActions>
             </Dialog>
         </div>
     );

@@ -48,7 +48,7 @@ export default function index() {
       Cell: (value) => (
         <div style={{display:'flex'}}>
           <IconButton aria-label="delete" onClick={() => {
-            navigate('/generation/'+value.row.original.id, { state:{isEdited:true} })
+            navigate('/buscador/'+value.row.original.id, { state:{isEdited:true} })
           }
           }>
             <RemoveRedEyeOutlinedIcon />
@@ -128,7 +128,7 @@ export default function index() {
     <div>
       <Grid container spacing={2} >
         <Grid item xs={12}>
-          <Typography color="initial">Procesos activos</Typography>
+          <Typography>Procesos activos</Typography>
         </Grid>
       
         <Grid item xs={12} >

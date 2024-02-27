@@ -1,14 +1,13 @@
-import { Button, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, Typography } from '@mui/material'
+import { Button, Grid, Paper, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
-import InventoryIcon from '@mui/icons-material/Inventory';
-
 import './style.css'
 export default function index() {
+    const messagesEndRef = useRef(null);
 
     const [messages, setMessages] = useState([
-        { sender: "Comprador", message: "Hola" },
+        { sender: "Tú", message: "Hola" },
         { sender: "Vendedor", message: "Hola, ¿cómo estás?" },
-        { sender: "Comprador", message: "Estoy bien, gracias. ¿Y tú?" },
+        { sender: "Tú", message: "Estoy bien, gracias. ¿Y tú?" },
         {
           sender: "Sistema",
           message: "# oferta editada #",
@@ -18,7 +17,9 @@ export default function index() {
           message: "A tu oferta le quedan 12 horas",
         },
       ]);
-   
+      useEffect(() => {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      }, [messages]);
       const [inputValue, setInputValue] = useState("");
     
       const handleInputChange = (event) => {
@@ -29,7 +30,7 @@ export default function index() {
         if (inputValue) {
           setMessages([
             ...messages,
-            { sender: "Vendedor", message: inputValue },
+            { sender: "Tú", message: inputValue },
           ]);
           setInputValue("");
         }
@@ -39,7 +40,7 @@ export default function index() {
             <Grid item xs={6} >
                 <Grid container spacing={2}>
                     <Grid item xs={12} >
-                        <Paper style={{ padding: 20, width: '100%' }}>
+                        <Paper style={{ padding: 20, width: '100%'}}>
                             <table border="1" style={{ width: '100%' }}>
                                 <caption style={{ fontWeight: 'bold' }}>Fecha de propuesta de visita</caption>
                                 <tr>
@@ -60,7 +61,7 @@ export default function index() {
                     <Grid item xs={12} >
                         <Paper style={{ padding: 20, width: '100%', display: 'flex', gap: 5 }}>
                             <table border="1" style={{ width: '60%',  }}>
-                                <caption style={{ fontWeight: 'bold' }}>Oferta recibida</caption>
+                                <caption style={{ fontWeight: 'bold' }}>Oferta enviada</caption>
                                 <tr>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
@@ -82,7 +83,7 @@ export default function index() {
                                     < td > $23.500 </ td >
                                 </tr>
                             </table>
-                            <table border="1" style={{ width: '40%', height: 10,  }}>
+                            <table border="1" style={{ width: '40%', height: 10}}>
                                 <caption style={{ fontWeight: 'bold' }}>-</caption>
                                 <tr>
                                     <th>Total Neto</th>
@@ -106,73 +107,26 @@ export default function index() {
                         {messages.map((message, index) => (
                             <div
                                 key={index}
-                                className={`message ${message.sender !== "Comprador" ? "sent  message-self" : "received" 
+                                className={`message ${message.sender === "Tú" ? "sent  message-self" : "received" 
                                     }  `}
                             >
                                 <div className="message-sender">{message.sender}</div>
                                 <div className="message-content">{message.message}</div>
                             </div>
                         ))}
-                               
+                                <div ref={messagesEndRef} />
 
                     </div>
                     <div className="chat-input">
                         <input
-                            disabled
                             type="text"
                             placeholder="Escribir mensaje..."
                             value={inputValue}
                             onChange={handleInputChange}
                         />
-                        <Button disabled onClick={handleSendMessage}>Enviar</Button>
+                        <Button onClick={handleSendMessage}>Enviar</Button>
                     </div>
                 </div>
-            </Grid>
-            
-            <Grid xs={12}>
-
-                <List dense={true} sx={{ height: 150, overflowY: 'auto' }} subheader={
-                    <ListSubheader component="div" id="nested-list-subheader">
-                        Procesos activos del comprador
-                    </ListSubheader>
-                }>
-                    <ListItem disablePadding>
-                        <ListItemButton disabled>
-                            <ListItemIcon>
-                                <InventoryIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Producto 1"  secondary="Producto de descripción" />
-                        </ListItemButton>
-
-                    </ListItem>
-                    <ListItem disablePadding>
-
-                        <ListItemButton disabled>
-                            <ListItemIcon>
-                                <InventoryIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Producto 2"  secondary="Producto de descripción"  />
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-
-                        <ListItemButton disabled>
-                            <ListItemIcon>
-                                <InventoryIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Producto 3"   secondary="Producto de descripción"  />
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-
-                        <ListItemButton disabled>
-                            <ListItemIcon>
-                                <InventoryIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Producto 4"   secondary="Producto de descripción" />
-                        </ListItemButton>
-                    </ListItem>
-                </List>
             </Grid>
         </Grid>
     )

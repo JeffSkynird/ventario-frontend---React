@@ -48,7 +48,7 @@ export default function index() {
       Cell: (value) => (
         <div style={{display:'flex'}}>
           <IconButton aria-label="delete" onClick={() => {
-            navigate('/ver_proceso_cerrado/'+value.row.original.id, { state:{isEdited:true} })
+            navigate('/cerrados/'+value.row.original.id, { state:{isEdited:true} })
           }
           }>
             <RemoveRedEyeOutlinedIcon />
@@ -112,7 +112,7 @@ export default function index() {
     <div>
       <Grid container spacing={2} >
         <Grid item xs={12}>
-          <Typography color="initial">Procesos cerrados</Typography>
+          <Typography >Procesos cerrados</Typography>
         </Grid>
        
         

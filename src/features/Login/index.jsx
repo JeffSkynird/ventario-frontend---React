@@ -16,11 +16,13 @@ import NavigateNextOutlinedIcon from '@mui/icons-material/NavigateNextOutlined';
 import fondo from '../../assets/images/background-ventario.png'
 import logo from '../../assets/images/logo.png'
 import { Box } from '@mui/system';
+import { useTheme } from '@emotion/react';
 export default function Login() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   let navigate = useNavigate();
   const [alignment, setAlignment] = useState('miembros');
   const [showPassword, setShowPassword] = useState(false)
+  const theme = useTheme();
   const { register, handleSubmit, formState: { errors }, setValue } = useForm({
     mode: 'onChange'
   });
@@ -29,7 +31,7 @@ export default function Login() {
       if (usuario.user.type == "comprador") {
         navigate("/")
       } else {
-        navigate("/procesos_activos")
+        navigate("/activos")
       }
     }
   }
@@ -60,6 +62,7 @@ export default function Login() {
   const handleAlignment = (event, newAlignment) => {
     setAlignment(newAlignment);
   };
+   
   return (
     <Grid container sx={{ height: '100vh', backgroundSize: 'cover' }}>
       <Grid item xs={0} md={7} sx={{ display: { xs: 'none', md: 'block' }, backgroundColor: '#00050d' }}>
@@ -79,7 +82,7 @@ export default function Login() {
 
 
       </Grid>
-      <Grid item xs={12} md={5} sx={{ backgroundColor: '#F2F7F2', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Grid item xs={12} md={5} sx={{ backgroundColor:  theme.palette.mode!="dark"?'#F2F7F2':'auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Grid container spacing={2} >
           <Grid item xs={12}>
 
@@ -159,7 +162,6 @@ Acceso exclusivo con membresía
                     //onClick={handleSubmit(entrar)}
                     fullWidth
                     variant="text"
-                    color="secondary"
                   >
                     Recuperar contraseña
                   </Button>

@@ -76,7 +76,7 @@ export default function index() {
       Cell: (value) => (
         <div style={{display:'flex'}}>
           <IconButton aria-label="delete" onClick={() => {
-            navigate('/generation/'+value.row.original.id)
+            navigate('/buscador/'+value.row.original.id)
           }
           }>
             <RemoveRedEyeOutlinedIcon />
