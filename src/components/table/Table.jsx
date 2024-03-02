@@ -28,7 +28,7 @@ export default function Table({ columns, data, onAdd }) {
         state: { pageIndex, pageSize }, } = useTable({
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 20 },
+            initialState: { pageIndex: 0, pageSize: 10 },
         },
             useSortBy,
             usePagination)

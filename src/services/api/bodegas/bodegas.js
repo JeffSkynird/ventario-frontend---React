@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export const  obtenerTodos = async ({queryKey}) => {
     const [_, token] = queryKey
-    let url = import.meta.env.VITE_API_URL+ "users"
+    let url = import.meta.env.VITE_API_URL+ "bodegas"
     let setting = {
         method: "GET",
         url: url,
@@ -14,7 +14,7 @@ export const  obtenerTodos = async ({queryKey}) => {
     return data;
 };
 export const crear = async (obj,token ) => {
-    let url = import.meta.env.VITE_API_URL+ "users"
+    let url = import.meta.env.VITE_API_URL+ "bodegas"
     let setting = {
         method: "POST",
         url: url,
@@ -36,7 +36,7 @@ export const obtenerUsuario = async (token) => {
     return data;
 };
 export const editar = async (obj,token) => {
-    let url = import.meta.env.VITE_API_URL+ "users/"+obj.id
+    let url = import.meta.env.VITE_API_URL+ "bodegas/"+obj.id
     let setting = {
         method: "PUT",
         url: url,
@@ -48,7 +48,7 @@ export const editar = async (obj,token) => {
     return data;
 };
 export const eliminar = async (id,token) => {
-    let url = import.meta.env.VITE_API_URL+ "users/"+id
+    let url = import.meta.env.VITE_API_URL+ "bodegas/"+id
     let setting = {
         method: "DELETE",
         url: url,

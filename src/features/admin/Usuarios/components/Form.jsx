@@ -1,10 +1,12 @@
-import { Breadcrumbs, Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, Link, OutlinedInput, TextField, Typography } from '@mui/material';
+import { Avatar, Breadcrumbs, Button, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, Link, MenuItem, OutlinedInput, Select, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react'
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useLocation } from 'react-router-dom';
-import { crear, editar } from '../../../../services/api/pacients/pacients';
+import { crear, editar } from '../../../../services/api/users/users';
+import { obtenerTodos } from '../../../../services/api/rols/rols';
+
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
@@ -15,29 +17,23 @@ export default function Form(props) {
     const { mostrarLoader, mostrarNotificacion, usuario } = useAuth()
     const [borndate, setBorndate] = useState(new Date())
     const [showPassword, setShowPassword] = useState(false)
-
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const [roles, setRoles] = useState([]);
+    const { register, handleSubmit, formState: { errors }, setValue, getValues, control } = useForm({
         mode: 'onChange', defaultValues: state
     });
     useEffect(() => {
-        if (state != null) {
-            /*     let parts =state.born_date.split('-');
-                if(parts!=null&&parts.length!=0){
-                    let mydate = new Date(parts[0], parts[1] - 1, parts[2]); 
-                    setBorndate(mydate)
-                }
-               */
+        console.log(state)
+        const funcion = async () => {
+            const data = await obtenerTodos(usuario.token)
+            setRoles(data.data)
         }
-    }, [state])
+        funcion();
+    }, [])
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
     const validacion = (dt) => {
         let errors = false;
-        if (!validar(dt.dni)) {
-            mostrarNotificacion({ type: "error", message: 'Cédula no válida' })
-            errors = true;
-        }
         if (!validateEmail(dt.email)) {
             mostrarNotificacion({ type: "error", message: 'Correo no válido' })
             errors = true;
@@ -72,8 +68,6 @@ export default function Form(props) {
     }
 
     const entrar = async (dt) => {
-        console.log(dt)
-        dt.born_date = borndate
         if (validacion(dt)) {
             return
         }
@@ -85,9 +79,9 @@ export default function Form(props) {
             data = await crear(dt, usuario.token)
         }
         mostrarLoader(false)
-        mostrarNotificacion(data)
-        if (data.status == 200) {
-            window.location.href = "/pacientes"
+        mostrarNotificacion({ type: data.status, message: data.message })
+        if (data.status == 'success') {
+            window.location.href = "/usuarios"
         }
     }
     const breadcrumbs = [
@@ -113,6 +107,13 @@ export default function Form(props) {
                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
     };
+    const handleCapture = (event) => {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado por el usuario
+        if (file) {
+            //setValue("avatar", URL.createObjectURL(file));
+            setValue("avatar", "https://mui.com/static/images/avatar/3.jpg");
+        }
+    }
     return (
         <Grid container spacing={2} >
             <Grid item xs={12}>
@@ -123,36 +124,47 @@ export default function Form(props) {
                     {breadcrumbs}
                 </Breadcrumbs>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Button style={{ marginTop: 10, borderRadius: 9 }} component="label" variant="contained" startIcon={<CloudUploadIcon />}>
                     Subir Avatar
-                    <input style={{ visibility: 'hidden', whiteSpace: 'nowrap', width: 0, overflow: 'hidden', }} type="file" name="" id="" />
-
-
+                    <input onChange={handleCapture} style={{ visibility: 'hidden', whiteSpace: 'nowrap', width: 0, overflow: 'hidden', }} type="file" name="" id="" />
                 </Button>
+                <Avatar sx={{ width: 56, height: 56 }} alt="Remy Sharp" src={getValues("avatar")} />
             </Grid>
             <Grid item xs={12}>
                 <TextField
                     variant="outlined"
                     label="Nombres"
-                    error={Boolean(errors.names)}
-                    {...register("names", {
+                    error={Boolean(errors.name)}
+                    {...register("name", {
                         required: "Required",
                     })}
                     sx={{ width: '100%' }}
-                    name="names"
+                    name="name"
+                />
+            </Grid>
+            <Grid item xs={12}>
+                <TextField
+                    variant="outlined"
+                    label="DNI"
+                    error={Boolean(errors.dni)}
+                    {...register("dni", {
+                        required: "Required",
+                    })}
+                    sx={{ width: '100%' }}
+                    name="dni"
                 />
             </Grid>
             <Grid item xs={12}>
                 <TextField
                     variant="outlined"
                     label="Usuario"
-                    error={Boolean(errors.last_names)}
-                    {...register("last_names", {
+                    error={Boolean(errors.username)}
+                    {...register("username", {
                         required: "Required",
                     })}
                     sx={{ width: '100%' }}
-                    name="last_names"
+                    name="username"
                 />
             </Grid>
 
@@ -168,18 +180,33 @@ export default function Form(props) {
                     name="email"
                 />
             </Grid>
-
             <Grid item xs={12}>
-                <TextField
-                    variant="outlined"
-                    label="Celular"
-                    error={Boolean(errors.phone)}
-                    {...register("phone", {
-                        required: "Required",
-                    })}
-                    sx={{ width: '100%' }}
-                    name="phone"
-                />
+                <FormControl fullWidth error={Boolean(errors.rolId)}>
+                    <InputLabel id="level-label">Rol</InputLabel>
+                    <Controller
+                        {...register("rolId", {
+                            required: "Required",
+                        })}
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                label="Rol"
+                                labelId="level-label"
+                                value={field.value || ''}
+                                onChange={(e) => field.onChange(e.target.value)}
+                            >
+                                <MenuItem value="">Selecciona un rol</MenuItem>
+                                {roles.map((e, index) => (
+                                    <MenuItem key={index} value={e.id}>
+                                        {e.rol}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        )}
+                    />
+                </FormControl>
+
+
             </Grid>
             <Grid item xs={12}>
                 <FormControl variant="outlined" sx={{ width: '100%' }}>
@@ -190,7 +217,6 @@ export default function Form(props) {
                         error={Boolean(errors.password)}
                         name="password"
                         {...register("password", {
-                            required: "Required",
                         })}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") {

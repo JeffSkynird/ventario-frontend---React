@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { obtenerPdf, obtenerPorTag, obtenerTodos } from '../../../services/api/generations/generations';
+import { subirArchivo } from '../../../services/api/products/products';
 import DownloadForOfflineOutlinedIcon from '@mui/icons-material/DownloadForOfflineOutlined';
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
@@ -22,14 +22,12 @@ import Modal from './components/Modal';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 
-import { crear, eliminar, eliminarPorGeneracion, obtenerTodos as obtenerTags } from '../../../services/api/tags/tags';
 export default function index() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState(0)
-  const { isLoading, isError, data, error, refetch, } = useQuery(['getResults', usuario.token, selectedTag], obtenerTodos)
   const navigate = useNavigate();
   const [tags, setTags] = useState([])
-  const [page, setPage] = useState(1);
+  const [fileUpload, setFileUpload] = useState(null);
   const [carga, setCarga] = useState(false);
 
   const VisuallyHiddenInput = styled('input')({
@@ -48,98 +46,10 @@ export default function index() {
   }, [])
   const eliminarRegistro = async (id) => {
     mostrarLoader(true)
-    const data1 = await eliminar(id, usuario.token)
+    const data1 = await subirArchivo(id, usuario.token)
     mostrarLoader(false)
     mostrarNotificacion(data1)
     obtenerLista()
-  }
-  async function obtenerLista() {
-    const data1 = await obtenerTags(usuario.token)
-    setTags(data1.data)
-  }
-
-  const handleDelete = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminarPorGeneracion(id, usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    refetch()
-  }
-
-  const columns = [
-    {
-      Header: 'Tag',
-      accessor: 'tag',
-      Cell: ({ row }) => (row.original.tag != null ? <Chip label={row.original.tag.name} onDelete={() => handleDelete(row.original.id)} color="primary" variant="outlined" /> : null)
-    },
-    {
-      Header: 'Estado',
-      accessor: 'status',
-      Cell: ({ row }) => (<Chip label={row.original.status} color="primary" />
-      )
-    },
-    {
-      Header: 'Iniciado en',
-      accessor: 'created_at',
-    },
-    {
-      Header: 'Finalizado en',
-      accessor: 'updated_at',
-    },
-    {
-      Header: 'Acciones',
-      accessor: 'action',
-      Cell: (value) => (
-        <div style={{ display: 'flex' }}>
-          <IconButton aria-label="delete" onClick={() => {
-            navigate('/buscador/' + value.row.original.id)
-          }
-          }>
-            <RemoveRedEyeOutlinedIcon />
-          </IconButton>
-          <IconButton aria-label="delete" onClick={() => {
-
-            imprimir(value.row.original.id)
-          }
-
-          }>
-            <CloudDownloadOutlinedIcon />
-          </IconButton>
-
-
-        </div>
-
-      )
-    },
-  ]
-  const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/" >
-      SISTEMA
-    </Link>,
-    <Link
-      underline="none"
-      key="2"
-      color="inherit"
-
-    >
-      Administración
-    </Link>,
-    <Typography key="3" color="text.primary">
-      Resultados
-    </Typography>,
-  ];
-
-  const imprimir = async (id) => {
-    const dat = await obtenerPdf(id, usuario.token);
-    const url = window.URL.createObjectURL(new Blob([dat]));
-    let a = document.createElement('a');
-    a.href = url;
-    a.download = 'generacion.pdf';
-    a.click();
-  }
-
-  const filtrarPorTag = async (id) => {
-    setSelectedTag(id)
   }
   const style = {
     container: {
@@ -162,11 +72,25 @@ export default function index() {
       fontSize: '18px'
     }
   };
- const handleCapture = ({ target }) => {
-    setCarga(true)
-    mostrarNotificacion({ type: "success", message: 'Archivo cargado con éxito' })
-
+  const handleCapture = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFileUpload(file)
+      setCarga(true)
+    }
+    
   };
+  const upload = async () => {
+    if(fileUpload == null){
+      mostrarNotificacion({ type: 'error', message: 'Seleccione un archivo' })
+      return
+    }
+    mostrarLoader(true)
+    const data1 = await subirArchivo(fileUpload, usuario.token)
+    mostrarLoader(false)
+    mostrarNotificacion({ type: data1.status, message: data1.message })
+   
+  }
   return (
     <div>
       <Grid container spacing={2} >
@@ -179,7 +103,7 @@ export default function index() {
             <Grid item xs={12}>
               <Paper style={{ padding: 20, width: '100%' }}>
 
-                <Typography style={{fontWeight:'bold',marginBottom:10}}>Cargar inventario</Typography>
+                <Typography style={{ fontWeight: 'bold', marginBottom: 10 }}>Cargar inventario</Typography>
 
 
                 {
@@ -190,9 +114,9 @@ export default function index() {
                 {
                   carga == false && (
                     <Button style={{ marginTop: 10, borderRadius: 9 }} component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-                      Subir archivo
-                      <input style={{visibility:'hidden',whiteSpace:'nowrap',width:0,    overflow: 'hidden',}}  onChange={handleCapture} type="file" name="" id="" />
-                    
+                      Cargar archivo
+                      <input style={{ visibility: 'hidden', whiteSpace: 'nowrap', width: 0, overflow: 'hidden', }} onChange={handleCapture} type="file" name="" id="" />
+
 
                     </Button>
                   )
@@ -200,8 +124,8 @@ export default function index() {
 
                 {
                   carga == true && (
-                    <Button style={{ marginTop: 10, borderRadius: 9 }} component="label" variant="outlined" onClick={()=>setCarga(false)}>
-                      Cerrar
+                    <Button color="secondary" style={{ marginTop: 10, borderRadius: 9 }} component="label" variant="contained" onClick={upload}>
+                      Subir Archivo
                     </Button>
                   )
                 }

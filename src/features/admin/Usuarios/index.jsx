@@ -3,43 +3,28 @@ import { useQuery } from 'react-query'
 import { useAuth } from '../../../hooks/useAuth';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Table from '../../../components/table/Table'
-import { Box, Breadcrumbs, Button, Chip, Grid, IconButton, Skeleton, Typography } from '@mui/material';
+import { Avatar, Box, Breadcrumbs, Button, Chip, Grid, IconButton, Skeleton, Typography } from '@mui/material';
 import Link from '@mui/material/Link';
 import { useNavigate } from 'react-router-dom';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import { obtenerPdf, obtenerPorTag, obtenerTodos } from '../../../services/api/generations/generations';
+import { obtenerTodos, eliminar } from '../../../services/api/users/users';
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 //import Modal from './components/Modal';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { crear, eliminar, eliminarPorGeneracion, obtenerTodos as obtenerTags } from '../../../services/api/tags/tags';
 export default function index() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState(0)
-  const { isLoading, isError, data, error, refetch, } = useQuery(['getResults', usuario.token, selectedTag], obtenerTodos)
+  const { isLoading, isError, data, error, refetch, } = useQuery(['getAll', usuario.token], obtenerTodos)
   const navigate = useNavigate();
   const [tags, setTags] = useState([])
 
-  React.useEffect(() => {
-    obtenerLista()
-  }, [])
   const eliminarRegistro = async (id) => {
     mostrarLoader(true)
     const data1 = await eliminar(id, usuario.token)
     mostrarLoader(false)
-    mostrarNotificacion(data1)
-    obtenerLista()
-  }
-  async function obtenerLista() {
-    const data1 = await obtenerTags(usuario.token)
-    setTags(data1.data)
-  }
+    mostrarNotificacion({ type: data1.status, message: data1.message })
+    
 
-  const handleDelete = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminarPorGeneracion(id, usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    refetch()
   }
 
   const columns = [
@@ -49,7 +34,7 @@ export default function index() {
       Cell: (value) => (
         <div style={{ display: 'flex' }}>
           <IconButton aria-label="delete" onClick={() => {
-            navigate('/usuarios/' + value.row.original.id, { state: { isEdited: true } })
+            navigate('/usuarios/' + value.row.original.id, { state: value.row.original })
           }
           }>
             <RemoveRedEyeOutlinedIcon />
@@ -68,29 +53,37 @@ export default function index() {
     },
     {
       Header: 'Avatar',
-      accessor: 'tag',
-      Cell: ({ row }) => (<Chip label={row.original.tag} color="primary" />)
+      accessor: 'avatar',
+      Cell: ({ row }) => (
+        <Avatar alt="Remy Sharp" src={row.original.avatar} />
+      )
 
     },
     {
       Header: 'Nombre',
-      accessor: 'status',
+      accessor: 'name',
     },
     {
       Header: 'Usuario',
-      accessor: 'estado',
+      accessor: 'username',
     },
     {
       Header: 'Correo',
-      accessor: 'visita',
+      accessor: 'email',
     },
     {
-      Header: 'Celular',
-      accessor: 'oferta',
+      Header: 'DNI',
+      accessor: 'dni',
     },
     {
-      Header: 'Status',
-      accessor: 'statuss',
+      Header: 'Rol',
+      accessor: 'role',
+      Cell: ({ row }) => (<span>{row.original.rol?.rol}</span>)
+    },
+    {
+      Header: 'Estado',
+      accessor: 'status',
+      Cell: ({ row }) => (<Chip label={row.original.status ? "Activo" : "Inactivo"} color="primary" />)
     },
 
   ]
@@ -139,7 +132,7 @@ export default function index() {
               <Skeleton height={100} />
             </Box>
           )}
-          {!isLoading && <Table columns={columns} data={!isLoading && !isError ? data.data : []} />}
+          {!isLoading && <Table columns={columns} data={!isLoading && !isError ? data : []} />}
 
         </Grid>
       </Grid>

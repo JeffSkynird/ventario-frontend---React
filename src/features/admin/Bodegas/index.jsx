@@ -7,39 +7,23 @@ import { Box, Breadcrumbs, Button, Chip, Grid, IconButton, Skeleton, Typography 
 import Link from '@mui/material/Link';
 import { useNavigate } from 'react-router-dom';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import { obtenerPdf, obtenerPorTag, obtenerTodos } from '../../../services/api/generations/generations';
+import { obtenerTodos } from '../../../services/api/bodegas/bodegas';
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 //import Modal from './components/Modal';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { crear, eliminar, eliminarPorGeneracion, obtenerTodos as obtenerTags } from '../../../services/api/tags/tags';
+import {eliminar } from '../../../services/api/bodegas/bodegas';
 export default function index() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState(0)
-  const { isLoading, isError, data, error, refetch, } = useQuery(['getResults', usuario.token, selectedTag], obtenerTodos)
+  const { isLoading, isError, data, error, refetch, } = useQuery(['getResults', usuario.token], obtenerTodos)
   const navigate = useNavigate();
   const [tags, setTags] = useState([])
 
-  React.useEffect(() => {
-    obtenerLista()
-  }, [])
   const eliminarRegistro = async (id) => {
     mostrarLoader(true)
     const data1 = await eliminar(id, usuario.token)
     mostrarLoader(false)
     mostrarNotificacion(data1)
-    obtenerLista()
-  }
-  async function obtenerLista() {
-    const data1 = await obtenerTags(usuario.token)
-    setTags(data1.data)
-  }
-
-  const handleDelete = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminarPorGeneracion(id, usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    refetch()
   }
 
   const columns = [
@@ -49,7 +33,7 @@ export default function index() {
       Cell: (value) => (
         <div style={{ display: 'flex' }}>
           <IconButton aria-label="delete" onClick={() => {
-            navigate('/bodegas/' + value.row.original.id, { state: { isEdited: true } })
+            navigate('/bodegas/' + value.row.original.id, { state: value.row.original  })
           }
           }>
             <RemoveRedEyeOutlinedIcon />
@@ -68,21 +52,22 @@ export default function index() {
     },
     {
       Header: 'Email',
-      accessor: 'tag',
-      Cell: ({ row }) => (<Chip label={row.original.tag} color="primary" />)
+      accessor: 'email',
 
     },
     {
       Header: 'Celular',
-      accessor: 'status',
+      accessor: 'phone',
     },
     {
       Header: 'Dirección',
-      accessor: 'estado',
+      accessor: 'address',
     },
     {
       Header: 'Status',
-      accessor: 'statuss',
+      accessor: 'status',
+      Cell: ({ row }) => (<Chip label={row.original.status ? "Activo" : "Inactivo"} color="primary" />)
+
     },
   ]
   const breadcrumbs = [
@@ -130,7 +115,7 @@ export default function index() {
               <Skeleton height={100} />
             </Box>
           )}
-          {!isLoading && <Table columns={columns} data={!isLoading && !isError ? data.data : []} />}
+          {!isLoading && <Table columns={columns} data={!isLoading && !isError ? data : []} />}
 
         </Grid>
       </Grid>

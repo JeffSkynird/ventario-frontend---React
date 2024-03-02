@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from 'react'
 import { useQuery } from 'react-query'
-import { eliminarUsuario, obtenerUsuarios } from '../../services/api/users/users'
 import Button from '@mui/material/Button'
 import { useAuth } from '../../hooks/useAuth';
 import { cerrarSesion } from '../../services/api/auth/login';

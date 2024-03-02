@@ -13,7 +13,6 @@ import Modal from './components/Modal';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import CloseIcon from '@mui/icons-material/Close';
-import { crear, eliminar, eliminarPorGeneracion, obtenerTodos as obtenerTags } from '../../../services/api/tags/tags';
 export default function index() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState(0)
@@ -22,28 +21,13 @@ export default function index() {
   const [tags, setTags] = useState([])
   const [open, setOpen] = useState(false)
 
-  React.useEffect(() => {
-    obtenerLista()
-  }, [])
   const eliminarRegistro = async (id) => {
     mostrarLoader(true)
     const data1 = await eliminar(id, usuario.token)
     mostrarLoader(false)
     mostrarNotificacion(data1)
-    obtenerLista()
-  }
-  async function obtenerLista() {
-    const data1 = await obtenerTags(usuario.token)
-    setTags(data1.data)
   }
 
-  const handleDelete = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminarPorGeneracion(id, usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    refetch()
-  }
 
   const columns = [
     {

@@ -6,39 +6,22 @@ import { Box, Breadcrumbs, Button, Chip, Grid, IconButton, Skeleton, Typography 
 import Link from '@mui/material/Link';
 import { useNavigate } from 'react-router-dom';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import { obtenerPdf, obtenerPorTag, obtenerTodos } from '../../../../services/api/generations/generations';
+import { crear, editar, eliminar, obtenerTodos } from '../../../../services/api/industrias/industrias';
 import Modal from './ModalComuna';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { crear, eliminar, eliminarPorGeneracion, obtenerTodos as obtenerTags } from '../../../../services/api/tags/tags';
 export default function index() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState(0)
-  const { isLoading, isError, data, error, refetch, } = useQuery(['getResults', usuario.token, selectedTag], obtenerTodos)
+  const { isLoading, isError, data, error, refetch, } = useQuery(['getResults', usuario.token], obtenerTodos)
   const navigate = useNavigate();
   const [tags, setTags] = useState([])
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState({visible:false,item:null})
 
-  React.useEffect(() => {
-    obtenerLista()
-  }, [])
   const eliminarRegistro = async (id) => {
     mostrarLoader(true)
     const data1 = await eliminar(id, usuario.token)
     mostrarLoader(false)
     mostrarNotificacion(data1)
-    obtenerLista()
-  }
-  async function obtenerLista() {
-    const data1 = await obtenerTags(usuario.token)
-    setTags(data1.data)
-  }
-
-  const handleDelete = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminarPorGeneracion(id, usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    refetch()
   }
 
   const columns = [
@@ -49,7 +32,7 @@ export default function index() {
         <div style={{ display: 'flex' }}>
           <IconButton aria-label="delete" onClick={() => {
             //navigate('/bodegas/' + value.row.original.id, { state: { isEdited: true } })
-            setOpen(true)
+            setOpen({visible:true,item:value.row.original})
           }
           }>
             <RemoveRedEyeOutlinedIcon />
@@ -68,13 +51,12 @@ export default function index() {
     },
     {
       Header: 'Nombre',
-      accessor: 'tag',
-      Cell: ({ row }) => (<Chip label={row.original.tag} color="primary" />)
-
+      accessor: 'industry',
     },
     {
       Header: 'Estado',
       accessor: 'status',
+      Cell: ({ row }) => (<Chip label={row.original.status ? "Activo" : "Inactivo"} color="primary" />)
     },
   ]
   const breadcrumbs = [
@@ -93,28 +75,34 @@ export default function index() {
       Bodegas
     </Typography>,
   ];
-
-  const imprimir = async (id) => {
-    const dat = await obtenerPdf(id, usuario.token);
-    const url = window.URL.createObjectURL(new Blob([dat]));
-    let a = document.createElement('a');
-    a.href = url;
-    a.download = 'generacion.pdf';
-    a.click();
-  }
-
-  const filtrarPorTag = async (id) => {
-    setSelectedTag(id)
-  }
+  const crearComuna = async (name,id) => {
+    mostrarLoader(true)
+    const obj = {
+        "id": id,
+        "industry": name,
+    }
+    let data1;
+    if(open.item!=null){
+      data1 = await editar(obj, usuario.token)
+    }else{
+      data1 = await crear(obj, usuario.token)
+    }
+    mostrarLoader(false)
+    mostrarNotificacion(data1)
+    if(data1.status=="success"){
+        refetch()
+        setOpen({visible:false,item:null})
+    }
+}
   return (
     <div>
       <Grid container spacing={2} >
-      <Modal open={open} setOpen={setOpen} title={"industrias"}/>
-      
+      <Modal  open={open} setOpen={setOpen} title={"industry"} refetch={refetch} confirm={crearComuna} />
+
         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography >Industrias</Typography>
           <Button variant="contained" onClick={() => {
-           setOpen(true)
+           setOpen({visible:true,item:null})
           }}>Crear</Button>
         </Grid>
 
@@ -124,7 +112,7 @@ export default function index() {
               <Skeleton height={100} />
             </Box>
           )}
-          {!isLoading && <Table columns={columns} data={!isLoading && !isError ? data.data : []} />}
+          {!isLoading && <Table columns={columns} data={!isLoading && !isError ? data : []} />}
 
         </Grid>
       </Grid>

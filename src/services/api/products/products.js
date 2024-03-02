@@ -1,9 +1,45 @@
 import axios from 'axios'
 
+export const subirArchivo = async (archivo, token) => {
+    let url = import.meta.env.VITE_API_URL + "products/import"; // Cambia la URL según la ruta de tu endpoint de carga de archivos en el servidor
+    let formData = new FormData();
+    formData.append('file', archivo); // Agrega el archivo al objeto FormData
 
+    let setting = {
+        method: "POST",
+        url: url,
+        data: formData,
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data' // Especifica el tipo de contenido como multipart/form-data
+        }
+    };
+
+    try {
+        const { data } = await axios(setting);
+        return data;
+    } catch (error) {
+        console.error("Error al subir archivo:", error);
+        throw error;
+    }
+};
 export const  obtenerTodos = async ({queryKey}) => {
     const [_, token] = queryKey
-    let url = import.meta.env.VITE_API_URL+ "users"
+    console.log("TOKEN")
+    console.log(token)
+    let url = import.meta.env.VITE_API_URL+ "products"
+    let setting = {
+        method: "GET",
+        url: url,
+        headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
+    };
+    const { data } = await axios(setting)
+    console.log(data)
+    return data;
+};
+export const  obtenerTodosFiltro = async (token) => {
+    let url = import.meta.env.VITE_API_URL+ "products"
     let setting = {
         method: "GET",
         url: url,
@@ -14,7 +50,7 @@ export const  obtenerTodos = async ({queryKey}) => {
     return data;
 };
 export const crear = async (obj,token ) => {
-    let url = import.meta.env.VITE_API_URL+ "users"
+    let url = import.meta.env.VITE_API_URL+ "products"
     let setting = {
         method: "POST",
         url: url,
@@ -36,7 +72,7 @@ export const obtenerUsuario = async (token) => {
     return data;
 };
 export const editar = async (obj,token) => {
-    let url = import.meta.env.VITE_API_URL+ "users/"+obj.id
+    let url = import.meta.env.VITE_API_URL+ "products/"+obj.id
     let setting = {
         method: "PUT",
         url: url,
@@ -48,7 +84,7 @@ export const editar = async (obj,token) => {
     return data;
 };
 export const eliminar = async (id,token) => {
-    let url = import.meta.env.VITE_API_URL+ "users/"+id
+    let url = import.meta.env.VITE_API_URL+ "products/"+id
     let setting = {
         method: "DELETE",
         url: url,

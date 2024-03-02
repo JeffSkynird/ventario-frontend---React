@@ -28,11 +28,12 @@ export default function Login() {
   });
   useEffect(() => {
     if (usuario != null) {
-      if (usuario.user.type == "comprador") {
+      console.log(usuario)
+      if (usuario.user.type == "Comprador") {
         navigate("/")
-      } else if(usuario.user.type =="vendedor"){
+      } else if(usuario.user.type =="Vendedor"){
         navigate("/activos")
-      } else if(usuario.user.type =="admin"){
+      } else if(usuario.user.type =="Admin"){
         navigate('/datos')
       }
     }
@@ -41,22 +42,23 @@ export default function Login() {
 
   const entrar = async (dt) => {
     mostrarLoader(true)
-    let obj = {
-      email: dt.email, password: dt.password
-    }
-    const tiempoEspera = 1000;
-    setTimeout(async () => {
+    try{
+      let obj = {
+        email: dt.email, password: dt.password
+      }
       const data = await iniciarSesion(obj)
       mostrarLoader(false)
-      mostrarNotificacion(data)
-      if (data.status == 200) {
-        let encrypt = encriptarJson(JSON.stringify({ user: data.user, token: data.token }))
+      mostrarNotificacion({ type: data.status,message: data.message })
+      if (data.status=="success") {
+        let encrypt = encriptarJson(JSON.stringify({ user:{names:data.data.user.name,email:data.data.user.email,avatar:data.data.user.avatar,id:data.data.user.id,type:data.data.user.rol.rol}, token: data.data.token }))
         cargarUsuario(encrypt)
         guardarSession(encrypt);
       }
-
-    }, tiempoEspera);
-
+    }catch(e){
+      console.log(e)
+      mostrarLoader(false)
+      mostrarNotificacion({ type: e.response.data.status,message: e.response.data.message})
+    }
   }
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -72,7 +74,7 @@ export default function Login() {
           {/*           <Lottie animationData={books} style={{ height: '85vh' }} />
  */}
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <img src={logo} alt="" srcset="" style={{ width: '60%', height: '30%' }} />
+            <img src={logo} alt="" style={{ width: '60%', height: '30%' }} />
           </Box>
 
           <div style={{ position: 'absolute', bottom: 10, }}>
@@ -94,7 +96,7 @@ Acceso exclusivo con membresía
 </Typography> */}
           </Grid>
           <Grid item xs={12} >
-            <Paper style={{ marginRight: '20%', marginLeft: '20%', }}>
+            <Paper sx={{ marginRight:{ lg:'20%',md:'10%',sm:'10%',xs:'2%'}, marginLeft:{lg:'20%',md:'10%',sm:"10%",xs:'2%'}, }}>
               <Box sx={{ backgroundColor: '#076B00',borderTopLeftRadius:3,borderTopRightRadius:3,padding:2 }}>
                 <Typography variant="h4" sx={{ textAlign: 'center', color: '#FFF' }}>
                   Iniciar Sesión

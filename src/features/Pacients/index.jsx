@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from 'react'
 import { useQuery } from 'react-query'
-import { eliminarUsuario } from '../../services/api/users/users'
 import { useAuth } from '../../hooks/useAuth';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Table from '../../components/table/Table'

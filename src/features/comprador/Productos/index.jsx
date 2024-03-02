@@ -5,29 +5,11 @@ import Table from '../../../components/table/Table'
 import { Box, Breadcrumbs, Chip, Grid, IconButton, Skeleton, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import {  obtenerPdf, obtenerPorTag, obtenerTodos2 } from '../../../services/api/generations/generations';
+import {  obtenerTodos,eliminar } from '../../../services/api/products/products';
 export default function index() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
+  const { isLoading, isError, data, error, refetch, } = useQuery(['getAll', usuario.token], obtenerTodos)
   const [selectedTag, setSelectedTag] = useState(0)
- const [data,setData] = useState([
-  {
-      tag:"GREENVIC",
-      status:"SAN FERNANDO",
-      estado:"ME-02020013",
-      visita: "CJ-OOIOOOI",
-      statuss: "CJ ARMAQ 4,50KG GRAPE GWICH",
-      oferta: "5K",
-      formulario:"9.230",
-      fechaRetiro:"20.150",
-      precio:150,
-      ofertaS:"S",
-      imagen:"Si",
-      ventamin:"",
-      restricciones:"001"
-      
-  }
-  
-]) 
   const navigate = useNavigate();
   const [tags, setTags] = useState([])
 
@@ -51,57 +33,60 @@ export default function index() {
   },
   {
     Header: 'Empresa',
-    accessor: 'tag',
-    Cell: ({ row }) => (<Chip label={row.original.tag} color="primary"/>)
+    Cell: ({ row }) => (<span>Empresa 1</span>)
 
   },
   {
     Header: 'Bodega',
-    accessor: 'status',
+    Cell: ({ row }) => (<span>Bodega 1</span>)
+
   },
   {
     Header: 'Cod Emp',
-    accessor: 'estado',
+    Cell: ({ row }) => (<span>Cod Emp: 1</span>)
+
+
   },
   {
     Header: 'Cod Ventario',
-    accessor: 'visita',
+    accessor: 'codVentario',
   },
   {
     Header: 'Descripción Item',
-    accessor: 'statuss',
+    accessor: 'description',
   },
   {
     Header: 'Kilos',
-    accessor: 'oferta',
+    accessor: 'totalUnits',
   },
   {
     Header: 'Armado',
-    accessor: 'formulario',
+    Cell: ({ row }) => (<span>10</span>)
   },
   {
     Header: 'Por armar',
-    accessor: 'fechaRetiro',
+    accessor: 'created_at',
   },
   {
     Header: 'Precio',
-    accessor: 'precio',
+    accessor: 'unitPrice',
   },
   {
     Header: 'Oferta S/N',
-    accessor: 'ofertaS',
+    Cell: ({ row }) => (<Chip label={"S"} color="primary" />)
+
   },
   {
     Header: 'Imagen',
-    accessor: 'imagen',
+    Cell: ({ row }) => ( <img src={"https://images.pexels.com/photos/39803/pexels-photo-39803.jpeg?cs=srgb&dl=food-healthy-apple-39803.jpg&fm=jpg"} style={{width:50,height:50}}/>)
   },
   {
     Header: 'Venta mínima',
-    accessor: 'ventamin',
+    accessor: 'minimumSale',
   },
   {
     Header: 'Restricciones',
-    accessor: 'restricciones',
+    accessor: 'restriction',
   },
 ]
 
@@ -110,12 +95,16 @@ export default function index() {
     <div>
       <Grid container spacing={2} >
         <Grid item xs={12}>
-          <Typography>Procesos activos</Typography>
+          <Typography>Mis productos</Typography>
         </Grid>
       
         <Grid item xs={12} >
-         
-        <Table columns={columns} data={data }  />
+        {isLoading && (
+            <Box >
+              <Skeleton height={100} />
+            </Box>
+          )}
+          {!isLoading && <Table columns={columns} data={!isLoading && !isError ? data : []} />}
 
         </Grid>
       </Grid>

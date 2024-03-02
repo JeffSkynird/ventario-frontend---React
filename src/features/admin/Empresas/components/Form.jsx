@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useLocation } from 'react-router-dom';
-import { crear, editar } from '../../../../services/api/pacients/pacients';
+import { crear, editar } from '../../../../services/api/empresas/empresas';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -18,16 +18,6 @@ export default function Form(props) {
     const { register, handleSubmit, formState: { errors } } = useForm({
         mode: 'onChange', defaultValues: state
     });
-    useEffect(() => {
-        if (state != null) {
-            /*     let parts =state.born_date.split('-');
-                if(parts!=null&&parts.length!=0){
-                    let mydate = new Date(parts[0], parts[1] - 1, parts[2]); 
-                    setBorndate(mydate)
-                }
-               */
-        }
-    }, [state])
     const validacion = (dt) => {
         let errors = false;
         if (!validar(dt.dni)) {
@@ -69,10 +59,6 @@ export default function Form(props) {
 
     const entrar = async (dt) => {
         console.log(dt)
-        dt.born_date = borndate
-        if (validacion(dt)) {
-            return
-        }
         mostrarLoader(true)
         let data;
         if (state) {
@@ -81,9 +67,9 @@ export default function Form(props) {
             data = await crear(dt, usuario.token)
         }
         mostrarLoader(false)
-        mostrarNotificacion(data)
-        if (data.status == 200) {
-            window.location.href = "/pacientes"
+        mostrarNotificacion({ type: data.status, message: data.message })
+        if (data.status == 'success') {
+            window.location.href = "/empresas"
         }
     }
     const breadcrumbs = [
@@ -123,24 +109,24 @@ export default function Form(props) {
                 <TextField
                     variant="outlined"
                     label="Razón social"
-                    error={Boolean(errors.names)}
-                    {...register("names", {
+                    error={Boolean(errors.razonSocial)}
+                    {...register("razonSocial", {
                         required: "Required",
                     })}
                     sx={{ width: '100%' }}
-                    name="names"
+                    name="razonSocial"
                 />
             </Grid>
             <Grid item xs={12}>
                 <TextField
                     variant="outlined"
                     label="RUT"
-                    error={Boolean(errors.last_names)}
-                    {...register("last_names", {
+                    error={Boolean(errors.RUT)}
+                    {...register("RUT", {
                         required: "Required",
                     })}
                     sx={{ width: '100%' }}
-                    name="last_names"
+                    name="RUT"
                 />
             </Grid>
 
@@ -148,12 +134,12 @@ export default function Form(props) {
                 <TextField
                     variant="outlined"
                     label="Celular"
-                    error={Boolean(errors.email)}
-                    {...register("email", {
+                    error={Boolean(errors.phone)}
+                    {...register("phone", {
                         required: "Required",
                     })}
                     sx={{ width: '100%' }}
-                    name="email"
+                    name="phone"
                 />
             </Grid>
             <Grid item xs={12}>

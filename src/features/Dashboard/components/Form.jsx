@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { crearUsuarios, editarUsuarios } from '../../../services/api/users/users';
 import { useAuth } from '../../../hooks/useAuth';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useLocation } from 'react-router-dom';
@@ -19,7 +18,7 @@ export default function Form(props) {
         event.preventDefault();
     };
     const entrar = async (dt) => {
-        mostrarLoader(true)
+      /*   mostrarLoader(true)
         let data;
         if (state) {
             data = await editarUsuarios(dt)
@@ -30,7 +29,7 @@ export default function Form(props) {
         mostrarNotificacion(data)
         if (data.status == 200) {
             window.location.href = "/usuarios"
-        }
+        } */
     }
     const breadcrumbs = [
         <Link underline="none" key="1" color="inherit"  >

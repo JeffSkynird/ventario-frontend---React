@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import { asignarTag, crear } from '../../../../services/api/tags/tags';
+import {  crear } from '../../../../services/api/comunas/comunas';
 import { useAuth } from '../../../../hooks/useAuth';
 import { Autocomplete, Box, Chip, TextField, Typography } from '@mui/material';
 
@@ -19,44 +19,23 @@ export default function AlertDialogSlide(props) {
 
     const [name, setName] = React.useState('');
  
+    React.useEffect(() => {
+        if (props.open.visible&&props.open.item!=null) {
+            setName(props.open.item[props.title])
+        }
+    }, [props.open.visible])
     const handleClose = () => {
-        props.setOpen(false);
+        setName('')
+        props.setOpen({...props.open,visible:false});
     };
-    const crearTag = async () => {
-        mostrarLoader(true)
-        const obj = {
-            "name": name,
-            "generation_id": props.generation_id
-        }
-        const data1 = await crear(obj, usuario.token)
-        mostrarLoader(false)
-        mostrarNotificacion(data1)
-        props.obtenerLista()
-        props.refetch()
-        handleClose()
+    const crearComuna = async () => {
+        setName('')
+        props.confirm(name,props.open.item!=null?props.open.item.id:null);
     }
-
-    const asignar = async (id) => {
-        mostrarLoader(true)
-        let obj = {
-            "tag_id": id,
-            "generation_id": props.generation_id
-        }
-        const data1 = await asignarTag(obj, usuario.token)
-        mostrarLoader(false)
-        mostrarNotificacion(data1)
-        props.obtenerLista()
-        props.refetch()
-        handleClose()
-
-    }
-    const top100Films = [
-        { label: 'Producto 1', description: 'Descripcion' },
-        { label: 'Producto 2', description: 'Descripcion2' },
-    ]
+ 
     return (
         <Dialog
-            open={props.open}
+            open={props.open.visible}
             TransitionComponent={Transition}
             keepMounted
            maxWidth="sm"
@@ -64,20 +43,24 @@ export default function AlertDialogSlide(props) {
             onClose={handleClose}
             aria-describedby="alert-dialog-slide-description"
         >
-            <DialogTitle>{"Agregar "}{props.title}</DialogTitle>
+            <DialogTitle>{props.open.item!=null?"Actualizar":"Crear"} {props.title}</DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description">
                     Registre los datos
                 </DialogContentText>
                 <TextField
-                  id=""
-                  sx={{ width: '100%',marginTop:2 }}
-                  label="Nombre"
+                    sx={{ width: '100%',marginTop:2 }}
+                    label="Nombre"
+                    variant='outlined'
+                    value={name}
+                    onChange={(e) => {
+                        setName(e.target.value)
+                    }}
                 />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>
-                <Button onClick={handleClose}>Agregar</Button>
+                <Button onClick={crearComuna}>{props.open.item!=null?"Actualizar":"Crear"}</Button>
             </DialogActions>
         </Dialog>
     );

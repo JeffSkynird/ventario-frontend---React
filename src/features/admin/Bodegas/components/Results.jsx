@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { EditOutlined, Visibility, VisibilityOff } from '@mui/icons-material'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { crearUsuarios, editarUsuarios } from '../../../services/api/users/users';
 import { useAuth } from '../../../hooks/useAuth';
 import { useLocation } from 'react-router-dom';
 import Table from '../../../components/table/Table';
@@ -14,7 +13,6 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useEffect } from 'react';
 import { obtenerTodos } from '../../../services/api/pacients/pacients';
 import { obtener } from '../../../services/api/exams/exams';
-import { obtenerResultadosId } from '../../../services/api/generations/generations';
 import { Box } from '@mui/system';
 import { editar, obtenerResultadosPorPaciente } from '../../../services/api/results/results';
 
