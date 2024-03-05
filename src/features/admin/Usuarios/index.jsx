@@ -64,6 +64,13 @@ export default function index() {
       accessor: 'name',
     },
     {
+      Header: 'Empresa',
+      accessor: 'company',
+      Cell: ({ row }) => (
+        <span>{row.original.company?.razonSocial||"-"}</span>
+      )
+    },
+    {
       Header: 'Usuario',
       accessor: 'username',
     },

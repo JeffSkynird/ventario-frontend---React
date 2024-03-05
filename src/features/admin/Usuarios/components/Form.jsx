@@ -6,6 +6,7 @@ import { useAuth } from '../../../../hooks/useAuth';
 import { useLocation } from 'react-router-dom';
 import { crear, editar } from '../../../../services/api/users/users';
 import { obtenerTodos } from '../../../../services/api/rols/rols';
+import { obtenerTodosFiltro as obtenerEmpresas } from '../../../../services/api/empresas/empresas';
 
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -18,6 +19,7 @@ export default function Form(props) {
     const [borndate, setBorndate] = useState(new Date())
     const [showPassword, setShowPassword] = useState(false)
     const [roles, setRoles] = useState([]);
+    const [empresas, setEmpresas] = useState([]);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, control } = useForm({
         mode: 'onChange', defaultValues: state
     });
@@ -25,7 +27,9 @@ export default function Form(props) {
         console.log(state)
         const funcion = async () => {
             const data = await obtenerTodos(usuario.token)
+            const data2 = await obtenerEmpresas(usuario.token)
             setRoles(data.data)
+            setEmpresas(data2)
         }
         funcion();
     }, [])
@@ -179,6 +183,35 @@ export default function Form(props) {
                     sx={{ width: '100%' }}
                     name="email"
                 />
+            </Grid>
+            
+            <Grid item xs={12}>
+                <FormControl fullWidth error={Boolean(errors.companyId)}>
+                    <InputLabel id="level-label">Empresa</InputLabel>
+                    <Controller
+                        {...register("companyId", {
+                            required: "Required",
+                        })}
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                label="Empresa"
+                                labelId="level-label"
+                                value={field.value || ''}
+                                onChange={(e) => field.onChange(e.target.value)}
+                            >
+                                <MenuItem value="">Selecciona una empresa</MenuItem>
+                                {empresas.map((e, index) => (
+                                    <MenuItem key={index} value={e.id}>
+                                        {e.razonSocial}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        )}
+                    />
+                </FormControl>
+
+
             </Grid>
             <Grid item xs={12}>
                 <FormControl fullWidth error={Boolean(errors.rolId)}>

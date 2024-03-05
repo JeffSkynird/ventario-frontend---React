@@ -35,16 +35,6 @@ export const  obtenerTodos = async ({queryKey}) => {
         headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
     };
     const { data } = await axios(setting)
-    data.push(data[0])
-    data.push(data[1])
-    data.push(data[2])
-    data.push(data[0])
-    data.push(data[1])
-    data.push(data[2])
-    data.push(data[0])
-    data.push(data[1])
-    data.push(data[2])
-    console.log(data)
     return data;
 };
 

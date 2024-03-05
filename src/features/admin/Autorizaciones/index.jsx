@@ -7,7 +7,7 @@ import { Box, Breadcrumbs, Button, Chip, Grid, IconButton, Skeleton, Typography 
 import Link from '@mui/material/Link';
 import { useNavigate } from 'react-router-dom';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import { obtenerPdf, obtenerPorTag, obtenerTodos } from '../../../services/api/generations/generations';
+//import { obtenerPdf, obtenerPorTag, obtenerTodos } from '../../../services/api/generations/generations';
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 import Modal from './components/Modal';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -16,7 +16,10 @@ import CloseIcon from '@mui/icons-material/Close';
 export default function index() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState(0)
-  const { isLoading, isError, data, error, refetch, } = useQuery(['getResults', usuario.token, selectedTag], obtenerTodos)
+  const [data,setData] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+
+ // const { isLoading, isError, data, error, refetch, } = useQuery(['getResults', usuario.token, selectedTag], obtenerTodos)
   const navigate = useNavigate();
   const [tags, setTags] = useState([])
   const [open, setOpen] = useState(false)
@@ -125,7 +128,7 @@ export default function index() {
               <Skeleton height={100} />
             </Box>
           )}
-          {!isLoading && <Table columns={columns} data={!isLoading && !isError ? data.data : []} />}
+          {!isLoading && <Table columns={columns} data={!isLoading ? data : []} />}
 
         </Grid>
       </Grid>

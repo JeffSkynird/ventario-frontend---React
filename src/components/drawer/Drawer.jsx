@@ -66,7 +66,7 @@ function ResponsiveDrawer(props) {
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: 10, marginTop: 20 }}>
           {/* <img src={logo} alt="google" width={'80%'}/> */}
-          <img src={avatar} alt="" style={{ width: 80 }} />
+          <img src={usuario.user?.avatar} alt="" style={{ width: 80,borderRadius: 50}} />
           {/* <Typography variant='body2'>Bienvenido, <span style={{fontWeight:'bold',color:'#5E35B1'}}>Jefferson</span> </Typography> */}
         </div>
         <List>
@@ -198,7 +198,7 @@ function ResponsiveDrawer(props) {
 
       </div>
       <div style={{ position: 'absolute', bottom: 10, left: 15 }}>
-        <Typography variant="body2" style={{ opacity: 0.6, color: 'white', textAlign: 'center' }} color="initial">Copyright © 2023 by VENTARIO</Typography>
+        <Typography variant="body2" style={{ opacity: 0.6, color: 'white', textAlign: 'center' }} color="initial">Copyright © 2024 by VENTARIO</Typography>
         <Typography variant="body2" style={{ opacity: 0.6, color: 'white', textAlign: 'center' }} color="initial">
           All rights reserved</Typography>
       </div>
@@ -244,8 +244,8 @@ function ResponsiveDrawer(props) {
             <MenuIcon />
           </IconButton>
           <div>
-            <Typography variant="h6" noWrap component="div" color="primary">
-              {usuario.user.type == "Comprador" ? "COMPRADOR" : "VENDEDOR"}
+            <Typography variant="h6" noWrap component="div" color="primary" sx={{textTransform:'uppercase'}}>
+              {usuario?.user?.type }
             </Typography>
             <Typography variant="body2" color="initial" sx={{ color: 'gray' }}>Sistema en desarrollo</Typography>
           </div>
