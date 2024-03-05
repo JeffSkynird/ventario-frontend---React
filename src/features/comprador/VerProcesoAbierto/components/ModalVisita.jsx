@@ -9,6 +9,8 @@ import Slide from '@mui/material/Slide';
 import { asignarTag, crear } from '../../../../services/api/tags/tags';
 import { useAuth } from '../../../../hooks/useAuth';
 import { Box, Checkbox, Chip, FormControlLabel, TextField, Typography } from '@mui/material';
+import { getLastOfferById } from '../../../../helpers/General';
+import { editarEstadoVisita } from '../../../../services/api/processes/processes';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -17,7 +19,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AlertDialogSlide(props) {
     const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
 
-    const { open, setOpen } = props;
+    const { open, setOpen,item } = props;
     const [name, setName] = React.useState('');
     const [isComplete, setIscomplete] = React.useState(false)
     const [isConfirm, setIsConfirm] = React.useState(false)
@@ -30,18 +32,24 @@ export default function AlertDialogSlide(props) {
         setIscomplete(false)
         setOpen(false);
     };
-    const crearTag = async () => {
+    const crearTag = async (statusId,type) => {
         mostrarLoader(true)
-        const tiempoEspera = 1000;
-        setTimeout(() => {
-            if (isComplete == false) {
-                setIscomplete(true)
+        let obj = {
+            "id": getLastOfferById(item.visits).id,
+            "statusId": statusId
+        }
+        let data1 = await editarEstadoVisita(obj, usuario.token)
+        mostrarLoader(false)
+        mostrarNotificacion({ type: data1.status, message: data1.message })
+        if (data1.status == 'success') {
+            setIscomplete(true)
+            if(type=="confirmar"){
                 setIsConfirm(true)
+            }else{
+                setIsConfirm(false)
+            
             }
-
-            mostrarLoader(false)
-        }, tiempoEspera);
-
+        }
     }
 
     const asignar = async (id) => {
@@ -91,10 +99,10 @@ export default function AlertDialogSlide(props) {
                                     </tr>
                                     <tr>
                                         <td align='center'>
-                                            <TextField variant="standard" type="date" name="" id="" />
+                                            <TextField variant="standard" disabled   value={getLastOfferById(item.visits)?.date}/>
                                         </td>
                                         <td align='center'>
-                                            <TextField variant="standard" type="time" name="" id="" />
+                                            <TextField variant="standard" disabled value={getLastOfferById(item.visits)?.schedule?.schedule}/>
 
                                         </td>
                                     </tr>
@@ -121,8 +129,8 @@ export default function AlertDialogSlide(props) {
                 </DialogContent>
                 <DialogActions>
                     <Button  onClick={handleClose}>Cerrar</Button>
-                    <Button color='error' style={{ display: isComplete ? 'none' : 'inline' }} onClick={rechazarConfirm}>Rechazar</Button>
-                    <Button color='secondary' style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Confirmar</Button>
+                    <Button color='error' style={{ display: isComplete ? 'none' : 'inline' }} onClick={()=>crearTag(5,"rechazar")}>Rechazar</Button>
+                    <Button color='secondary' style={{ display: isComplete ? 'none' : 'inline' }} onClick={()=>crearTag(2,"confirmar")}>Confirmar</Button>
                 </DialogActions>
             </Dialog>
         </div>

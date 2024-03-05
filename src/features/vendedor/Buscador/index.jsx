@@ -1,131 +1,51 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import Button from '@mui/material/Button'
 import { useAuth } from '../../../hooks/useAuth';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import Table from '../../../components/table/Table'
-import { Box, Breadcrumbs, Chip, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Skeleton, TextField, Typography } from '@mui/material';
-import Link from '@mui/material/Link';
-import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import { Box, Breadcrumbs, Chip, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, Skeleton, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { obtenerPdf, obtenerPorTag, obtenerTodos } from '../../../services/api/generations/generations';
-import DownloadForOfflineOutlinedIcon from '@mui/icons-material/DownloadForOfflineOutlined';
-import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
-import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import Modal from './components/Modal';
-import { crear, eliminar, eliminarPorGeneracion, obtenerTodos as obtenerTags } from '../../../services/api/tags/tags';
+import { obtenerTipoProductos, obtenerTodos, obtenerTodosPagina } from '../../../services/api/products/products';
+import { obtenerTodosFiltro } from '../../../services/api/regiones/regiones';
+import { obtenerTodosFiltro as obtenerComunas } from '../../../services/api/comunas/comunas';
+import { obtenerTodosFiltro as obtenerIndustrias } from '../../../services/api/industrias/industrias';
+import ClearIcon from '@mui/icons-material/Clear';
+
+import SearchIcon from '@mui/icons-material/Search';
 export default function index() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState(0)
-  const { isLoading, isError, data, error, refetch, } = useQuery(['getResults', usuario.token, selectedTag], obtenerTodos)
+  const [page, setPage] = useState(1);
+  const [filtersTemp, setFiltersTemp] = useState(null)
+  const [filters, setFilters] = useState(null)
+  const { isLoading, isError, data, error, refetch, } = useQuery(['getAll', usuario.token, page, filters], obtenerTodosPagina)
   const navigate = useNavigate();
-  const [tags, setTags] = useState([])
-  const [page,setPage] = useState(1);
+  const [name, setName] = useState('')
+  const [region, setRegion] = useState('')
+  const [regionData, setRegionData] = useState([]);
+  const [comuna, setComuna] = useState('')
+  const [comunaData, setComunaData] = useState([]);
+  const [type, setType] = useState('')
+  const [typeData, setTypeData] = useState([]);
 
-  React.useEffect(() => {
-   // obtenerLista()
+  const [industry, setIndustry] = useState('')
+  const [industryData, setIndustryData] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const data1 = await obtenerTipoProductos(usuario.token)
+      const data2 = await obtenerTodosFiltro(usuario.token)
+      const data3 = await obtenerComunas(usuario.token);
+      const data4 = await obtenerIndustrias(usuario.token);
+
+      setRegionData(data2)
+      setComunaData(data3)
+      setTypeData(data1)
+      setIndustryData(data4)
+    }
+    fetchData()
+
   }, [])
-  const eliminarRegistro = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminar(id, usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    obtenerLista()
-  }
-  async function obtenerLista() {
-    const data1 = await obtenerTags(usuario.token)
-    setTags(data1.data)
-  }
-
-  const handleDelete = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminarPorGeneracion(id, usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    refetch()
-  }
-
-  const columns = [
-    {
-      Header: 'Tag',
-      accessor: 'tag',
-      Cell: ({ row }) => (row.original.tag != null ? <Chip label={row.original.tag.name} onDelete={() => handleDelete(row.original.id)} color="primary" variant="outlined" /> : null)
-    },
-    {
-      Header: 'Estado',
-      accessor: 'status',
-      Cell: ({ row }) => (<Chip label={row.original.status} color="primary" />
-      )
-    },
-    {
-      Header: 'Iniciado en',
-      accessor: 'created_at',
-    },
-    {
-      Header: 'Finalizado en',
-      accessor: 'updated_at',
-    },
-    {
-      Header: 'Acciones',
-      accessor: 'action',
-      Cell: (value) => (
-        <div style={{ display: 'flex' }}>
-          <IconButton aria-label="delete" onClick={() => {
-            navigate('/buscador/' + value.row.original.id)
-          }
-          }>
-            <RemoveRedEyeOutlinedIcon />
-          </IconButton>
-          <IconButton aria-label="delete" onClick={() => {
-
-            imprimir(value.row.original.id)
-          }
-
-          }>
-            <CloudDownloadOutlinedIcon />
-          </IconButton>
-
-
-        </div>
-
-      )
-    },
-  ]
-  const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/" >
-      SISTEMA
-    </Link>,
-    <Link
-      underline="none"
-      key="2"
-      color="inherit"
-
-    >
-      Administración
-    </Link>,
-    <Typography key="3" color="text.primary">
-      Resultados
-    </Typography>,
-  ];
-
-  const imprimir = async (id) => {
-    const dat = await obtenerPdf(id, usuario.token);
-    const url = window.URL.createObjectURL(new Blob([dat]));
-    let a = document.createElement('a');
-    a.href = url;
-    a.download = 'generacion.pdf';
-    a.click();
-  }
-
-  const filtrarPorTag = async (id) => {
-    setSelectedTag(id)
-  }
   const style = {
     container: {
       padding: '10px',
@@ -145,11 +65,60 @@ export default function index() {
       fontSize: '18px'
     }
   };
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+  const search = () => {
+    console.log(filtersTemp)
+    setFilters(filtersTemp)
+  }
+  const handleSearch = (typeFilter, value) => {
+    let temp
+    if (typeFilter == "name") {
+      temp = { ...filtersTemp, name: value }
+    } else if (typeFilter == "region") {
+      temp = { ...filtersTemp, region: value }
+    } else if (typeFilter == "comuna") {
+      temp = { ...filtersTemp, comuna: value }
+    } else if (typeFilter == "industry") {
+      temp = { ...filtersTemp, industry: value }
+    } else if (typeFilter == "type") {
+      temp = { ...filtersTemp, type: value }
+    } else if (typeFilter == "reset") {
+      temp = null
+      setType('')
+      setComuna('')
+      setRegion('')
+      setIndustry('')
+      setName('')
+      setFilters(null)
+      setFiltersTemp(null)
+    }
+    if (temp) {
+      setFiltersTemp(temp)
+    }
+  }
   return (
     <div>
       <Grid container spacing={2} >
-        <Grid item xs={12}>
-          <Typography >Buscador</Typography>
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography sx={{fontWeight:'bold'}} >Buscador</Typography>
+          <div>
+            {
+              filters && (
+                <IconButton onClick={(e) => { handleSearch('reset', null) }}
+                >
+                  <ClearIcon />
+                </IconButton>
+              )
+            }
+
+            <IconButton onClick={search}
+            >
+              <SearchIcon />
+            </IconButton>
+          </div>
+
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={2}>
@@ -159,6 +128,17 @@ export default function index() {
                 label="Buscador"
                 sx={{ width: '100%' }}
                 name="Buscador"
+                value={name}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    search()
+                  }
+                }}
+                onChange={(e) => {
+                  setName(e.target.value)
+                  handleSearch('name', e.target.value)
+                }
+                }
               />
             </Grid>
             <Grid item xs={6} md={2}>
@@ -169,10 +149,18 @@ export default function index() {
                   id="demo-simple-select"
                   defaultValue=""
                   label={"Región"}
+                  onChange={(e) => {
+                    setRegion(e.target.value)
+                    handleSearch('region', e.target.value)
+                  }}
+                  value={region}
                 >
                   <MenuItem value={""}>Selecciona una región</MenuItem>
-                  <MenuItem value={1}>Región de Arica y Parinacota	</MenuItem>
-                  <MenuItem value={2}>Región de Tarapacá</MenuItem>
+                  {
+                    regionData.map((e) => (
+                      <MenuItem value={e.id}>{e.region}</MenuItem>
+                    ))
+                  }
 
                 </Select>
               </FormControl>
@@ -185,11 +173,18 @@ export default function index() {
                   id="demo-simple-select"
                   defaultValue=""
                   label={"Comuna"}
+                  onChange={(e) => {
+                    setComuna(e.target.value)
+                    handleSearch('comuna', e.target.value)
+                  }}
+                  value={comuna}
                 >
                   <MenuItem value={""}>Selecciona una comuna</MenuItem>
-                  <MenuItem value={1}>Arica</MenuItem>
-                  <MenuItem value={2}>Camarones</MenuItem>
-
+                  {
+                    comunaData.map((e) => (
+                      <MenuItem value={e.id}>{e.comuna}</MenuItem>
+                    ))
+                  }
                 </Select>
               </FormControl>
             </Grid>
@@ -201,11 +196,18 @@ export default function index() {
                   id="demo-simple-select"
                   defaultValue=""
                   label={"Tipo de producto"}
+                  onChange={(e) => {
+                    setType(e.target.value)
+                    handleSearch('type', e.target.value)
+                  }}
+                  value={type}
                 >
                   <MenuItem value={""}>Selecciona un tipo</MenuItem>
-                  <MenuItem value={1}>Uno</MenuItem>
-                  <MenuItem value={2}>Dos</MenuItem>
-
+                  {
+                    typeData.map((e) => (
+                      <MenuItem value={e.id}>{e.type}</MenuItem>
+                    ))
+                  }
                 </Select>
               </FormControl>
             </Grid>
@@ -217,11 +219,18 @@ export default function index() {
                   id="demo-simple-select"
                   defaultValue=""
                   label={"Industria"}
+                  onChange={(e) => {
+                    setIndustry(e.target.value)
+                    handleSearch('industry', e.target.value)
+                  }}
+                  value={industry}
                 >
                   <MenuItem value={""}>Selecciona una industria</MenuItem>
-                  <MenuItem value={1}>Una</MenuItem>
-                  <MenuItem value={2}>Dos</MenuItem>
-
+                  {
+                    industryData.map((e) => (
+                      <MenuItem value={e.id}>{e.industry}</MenuItem>
+                    ))
+                  }
                 </Select>
               </FormControl>
             </Grid>
@@ -247,123 +256,34 @@ export default function index() {
           )}
           {!isLoading && (
             <Grid container spacing={1}>
-              <Grid item xs={12} md={4}>
-                <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
-                  <div style={{ display: 'flex' }}>
-                    <div style={style.imageContainer}>
-                      <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/81x9-laqL0L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
-                    </div>
-                    <div style={style.detailsContainer}>
-                      <b style={style.title}>Nombre del producto</b><br />
-                      <span>4.8 ★★★★☆ (36)</span><br />
-                      <span >Arica Tarapacá</span><br />
-                      <span>Tipo Uno</span><br />
-                      <span style={{ opacity: 0.8 }}>3.000 unidades</span><br />
-                      <span style={{ opacity: 0.8 }}>Venta mínima de 1000 unidades</span><br />
-                    </div>
-                  </div>
 
-                </div>
-              </Grid>
-              <Grid item xs={12} md={4}>
-              <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
-                  <div style={{ display: 'flex' }}>
-                    <div style={style.imageContainer}>
-                      <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/710M8zAJK8L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
-                    </div>
-                    <div style={style.detailsContainer}>
-                      <b style={style.title}>Nombre del producto</b><br />
-                      <span>4.8 ★★★★☆ (36)</span><br />
-                      <span >Arica Tarapacá</span><br />
-                      <span>Tipo Uno</span><br />
-                      <span style={{ opacity: 0.8 }}>3.000 unidades</span><br />
-                      <span style={{ opacity: 0.8 }}>Venta mínima de 1000 unidades</span><br />
-                    </div>
-                  </div>
+              {
+                data?.data.map((item, index) => (
+                  <Grid item xs={12} md={4}>
+                    <div style={style.container} onClick={() => navigate('/buscador/' + item.id, { state:{item,isNew:true}})}>
+                      <div style={{ display: 'flex' }}>
+                        <div style={style.imageContainer}>
+                          <img style={{ height: '100px', width: '100px' }} src={item.image} alt="" />
+                        </div>
+                        <div style={style.detailsContainer}>
+                          <b style={style.title}>{item.name}</b><br />
+                          <span>{item.averageGrade} ★★★★☆ (36)</span><br />
+                          <span >Arica Tarapacá</span><br />
+                          <span>Tipo Uno</span><br />
+                          <span style={{ opacity: 0.8 }}>{item.totalUnits} unidades</span><br />
+                          <span style={{ opacity: 0.8 }}>Venta mínima de {item.minimumSale} unidades</span><br />
+                        </div>
+                      </div>
 
-                </div>
-              </Grid>
-              <Grid item xs={12} md={4}>
-              <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
-                  <div style={{ display: 'flex' }}>
-                    <div style={style.imageContainer}>
-                      <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/81x9-laqL0L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
                     </div>
-                    <div style={style.detailsContainer}>
-                      <b style={style.title}>Nombre del producto</b><br />
-                      <span>4.8 ★★★★☆ (36)</span><br />
-                      <span >Arica Tarapacá</span><br />
-                      <span>Tipo Uno</span><br />
-                      <span style={{ opacity: 0.8 }}>3.000 unidades</span><br />
-                      <span style={{ opacity: 0.8 }}>Venta mínima de 1000 unidades</span><br />
-                    </div>
-                  </div>
+                  </Grid>
 
-                </div>
-              </Grid>
-              <Grid item xs={12} md={4}>
-              <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
-                  <div style={{ display: 'flex' }}>
-                    <div style={style.imageContainer}>
-                      <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/710M8zAJK8L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
-                    </div>
-                    <div style={style.detailsContainer}>
-                      <b style={style.title}>Nombre del producto</b><br />
-                      <span>4.8 ★★★★☆ (36)</span><br />
-                      <span >Arica Tarapacá</span><br />
-                      <span>Tipo Uno</span><br />
-                      <span style={{ opacity: 0.8 }}>3.000 unidades</span><br />
-                      <span style={{ opacity: 0.8 }}>Venta mínima de 1000 unidades</span><br />
-                    </div>
-                  </div>
-
-                </div>
-              </Grid>
-              <Grid item xs={12} md={4}>
-              <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
-                  <div style={{ display: 'flex' }}>
-                    <div style={style.imageContainer}>
-                      <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/81x9-laqL0L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
-                    </div>
-                    <div style={style.detailsContainer}>
-                      <b style={style.title}>Nombre del producto</b><br />
-                      <span>4.8 ★★★★☆ (36)</span><br />
-                      <span >Arica Tarapacá</span><br />
-                      <span>Tipo Uno</span><br />
-                      <span style={{ opacity: 0.8 }}>3.000 unidades</span><br />
-                      <span style={{ opacity: 0.8 }}>Venta mínima de 1000 unidades</span><br />
-                    </div>
-                  </div>
-
-                </div>
-              </Grid>
-              <Grid item xs={12} md={4}>
-              <div style={style.container} onClick={()=>navigate('/buscador/'+1)}>
-                  <div style={{ display: 'flex' }}>
-                    <div style={style.imageContainer}>
-                      <img style={{ height: '100px', width: '100px' }} src="https://m.media-amazon.com/images/I/710M8zAJK8L.__AC_SX300_SY300_QL70_FMwebp_.jpg" alt="" />
-                    </div>
-                    <div style={style.detailsContainer}>
-                      <b style={style.title}>Nombre del producto</b><br />
-                      <span>4.8 ★★★★☆ (36)</span><br />
-                      <span >Arica Tarapacá</span><br />
-                      <span>Tipo Uno</span><br />
-                      <span style={{ opacity: 0.8 }}>3.000 unidades</span><br />
-                      <span style={{ opacity: 0.8 }}>Venta mínima de 1000 unidades</span><br />
-                    </div>
-                  </div>
-
-                </div>
-              </Grid>
+                )
+                )}
             </Grid>
-
           )}
-          <Grid item xs={12} style={{display:'flex',justifyContent:'center',marginTop:10}}>
-            <Typography ><IconButton style={{display:page>1?'inline':'none'}}  onClick={()=>setPage(page-1)}  >
-              <ArrowLeftIcon />
-            </IconButton>  Página {page} de 2  <IconButton style={{display:page<2?'inline':'none'}}  onClick={()=>setPage(page+1)}  >
-              <ArrowRightIcon />
-            </IconButton> </Typography>
+          <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+            <Pagination count={data?.totalPages} page={page} onChange={handleChange} />
 
           </Grid>
 

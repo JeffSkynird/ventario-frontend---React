@@ -219,7 +219,6 @@ function ResponsiveDrawer(props) {
     activarOscuro(!darkMode)
 
   }
-  console.log(usuario)
   return (
     <Box sx={{
       display: { sm: 'flex' }

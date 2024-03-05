@@ -35,7 +35,54 @@ export const  obtenerTodos = async ({queryKey}) => {
         headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
     };
     const { data } = await axios(setting)
+    data.push(data[0])
+    data.push(data[1])
+    data.push(data[2])
+    data.push(data[0])
+    data.push(data[1])
+    data.push(data[2])
+    data.push(data[0])
+    data.push(data[1])
+    data.push(data[2])
     console.log(data)
+    return data;
+};
+
+export const  obtenerTipoProductos = async (token) => {
+    let url = import.meta.env.VITE_API_URL+ `boxes/types/all`
+    let setting = {
+        method: "GET",
+        url: url,
+        headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
+    };
+    const { data } = await axios(setting)
+    return data;
+};
+export const  obtenerTodosPagina = async ({queryKey}) => {
+    const [_, token,page,filters] = queryKey
+    console.log("TOKEN")
+    console.log(token)
+    let url = import.meta.env.VITE_API_URL+ `products/page/${page}`
+    let setting = {
+        method: "GET",
+        url: url,
+        headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
+    };
+    if(filters){
+        setting.params = filters
+    }
+    const { data } = await axios(setting)
+    return data;
+};
+export const  obtenerTodosVendedorPagina = async (token,filters,page) => {
+    let url = import.meta.env.VITE_API_URL+ `products/vendor/page/${page}`
+    let setting = {
+        method: "GET",
+        url: url,
+        params: filters,
+        headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
+    };
+    const { data } = await axios(setting)
     return data;
 };
 export const  obtenerTodosFiltro = async (token) => {

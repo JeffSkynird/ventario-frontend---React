@@ -10,15 +10,6 @@ export const iniciarSesion = async (obj) => {
         headers: { 'Accept': 'application/json' }
     };
     const { data } = await axios(setting) 
-/*     let rol = "comprador";
-    if(obj.email=="commprador@gmail.com"){
-         rol = "comprador";
-    }else if(obj.email=="vendedor@gmail.com"){
-        rol="vendedor";
-    }else if(obj.email=="admin@gmail.com"){
-        rol="admin";
-    }
- */
     return data;
 };
 
@@ -30,6 +21,21 @@ export const cerrarSesion = async (token) => {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + token
+        }
+    };
+    const { data } = await axios(setting)
+    return data;
+};
+
+export const recuperarContraseña = async (obj) => {
+    let url = import.meta.env.VITE_API_URL + "users/change/"+obj.email
+    let setting = {
+        method: "POST",
+        url: url,
+        data: obj,
+        body: obj,
+        headers: {
+            'Accept': 'application/json',
         }
     };
     const { data } = await axios(setting)

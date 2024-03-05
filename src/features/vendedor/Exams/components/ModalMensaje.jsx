@@ -6,9 +6,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import { asignarTag, crear } from '../../../services/api/tags/tags';
-import { useAuth } from '../../../hooks/useAuth';
+import { asignarTag, crear } from '../../../../services/api/tags/tags';
+import { useAuth } from '../../../../hooks/useAuth';
 import { Box, Checkbox, Chip, FormControlLabel, TextField, Typography } from '@mui/material';
+import { sendClientMessage } from '../../../../services/api/chats/chats';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -17,8 +18,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AlertDialogSlide(props) {
     const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
 
-    const { open, setOpen } = props;
-    const [name, setName] = React.useState('');
+    const { open, setOpen,item } = props;
+    const [message, setMessage] = React.useState('');
     const [isComplete, setIscomplete] = React.useState(false)
     const handleClickOpen = () => {
         setOpen(true);
@@ -30,15 +31,21 @@ export default function AlertDialogSlide(props) {
     };
     const crearTag = async () => {
         mostrarLoader(true)
-        const tiempoEspera = 1000;
-        setTimeout(() => {
-            if (isComplete == false) {
-                setIscomplete(true)
-            }
+        let obj = {
+            "emisorId":usuario.user.id,
+            "receptorId":item.userid,
+            "typeId":2,
+            "message":message,
+            "processId":null,
+            "boxId":item.boxid
+        }
+        const data1 = await sendClientMessage(obj, usuario.token)
+        mostrarLoader(false)
+        mostrarNotificacion({ type: data1.status, message: data1.message })
+        if (data1.status == 'success') {
+            setIscomplete(true)
 
-            mostrarLoader(false)
-        }, tiempoEspera);
-
+        }
     }
 
     const asignar = async (id) => {
@@ -68,15 +75,15 @@ export default function AlertDialogSlide(props) {
                         !isComplete && (
                             <>
                                 <DialogContentText id="alert-dialog-slide-description">
-                                Recuerda que no puedes enviar informaciön que
-revele identidad de la empresa. El incumplimiento de
-esto estarå sujeto a sanciones de acuerdo al contrato.                                </DialogContentText>
+                                Puedes solicitar  información de los productos pero no puedes enviar información que revele identidades. Recuerda que esto no está permitido según clausula contractual.                               </DialogContentText>
 
                                 <TextField
                                         variant="outlined"
                                         label="Escribir mensaje..."
                                         sx={{ width: '100%' ,marginTop:1}}
                                         name="email"
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
                                         multiline={true}
                                         rows={3}
                                     />
@@ -86,14 +93,14 @@ esto estarå sujeto a sanciones de acuerdo al contrato.                         
                                 {
                                     isComplete && (
                                         <DialogContentText id="alert-dialog-slide-description">
-                                            Lorem ipsum dolor sit amet consectetur adipiscing elit mus, massa convallis ac hendrerit malesuada non primis, laoreet aliquet et feugiat senectus accumsan conubia. Quis sem felis vivamus torquent auctor pulvinar pretium luctus eu risus tristique, fringilla facilisis curabitur natoque gravida vulputate primis feugiat dictumst
+                                            Mensaje enviado
                                         </DialogContentText>
                                     )
                                 }
                             </DialogContent>
                     <DialogActions>
                         <Button onClick={handleClose}>Cerrar</Button>
-                        <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Enviar</Button>
+                        <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag} disabled={message==""}>Enviar</Button>
                     </DialogActions>
             </Dialog>
         </div>

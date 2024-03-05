@@ -9,6 +9,8 @@ import Slide from '@mui/material/Slide';
 import { asignarTag, crear } from '../../../../services/api/tags/tags';
 import { useAuth } from '../../../../hooks/useAuth';
 import { Box, Checkbox, Chip, FormControlLabel, TextField, Typography } from '@mui/material';
+import { editarEstadoOferta } from '../../../../services/api/processes/processes';
+import { getLastOfferById } from '../../../../helpers/General';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -17,7 +19,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AlertDialogSlide(props) {
     const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
 
-    const { open, setOpen } = props;
+    const { open, setOpen ,item} = props;
     const [name, setName] = React.useState('');
     const [isComplete, setIscomplete] = React.useState(false)
     const [isConfirm, setIsConfirm] = React.useState(false)
@@ -30,18 +32,19 @@ export default function AlertDialogSlide(props) {
         setIscomplete(false)
         setOpen(false);
     };
-    const crearTag = async () => {
+    const crearTag = async (statusId) => {
         mostrarLoader(true)
-        const tiempoEspera = 1000;
-        setTimeout(() => {
-            if (isComplete == false) {
-                setIscomplete(true)
-                setIsConfirm(true)
-            }
-
-            mostrarLoader(false)
-        }, tiempoEspera);
-
+        let obj = {
+            "id": getLastOfferById(item.offers).id,
+            "statusId": statusId
+        }
+        let data1 = await editarEstadoOferta(obj, usuario.token)
+        mostrarLoader(false)
+        mostrarNotificacion({ type: data1.status, message: data1.message })
+        if (data1.status == 'success') {
+            setIscomplete(true)
+            setIsConfirm(true)
+        }
     }
 
     const asignar = async (id) => {
@@ -56,12 +59,12 @@ export default function AlertDialogSlide(props) {
 
         handleClose()
     }
-    const rechazar=()=> {
+    const rechazar = () => {
         setOpen(false)
         setIscomplete(false)
         setIsConfirm(false)
     }
-    const rechazarConfirm = ()=> {
+    const rechazarConfirm = () => {
         setIsConfirm(false)
         setIscomplete(true)
 
@@ -75,9 +78,9 @@ export default function AlertDialogSlide(props) {
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
             >
-               
+
                 <DialogTitle>Oferta recibida</DialogTitle>
-                  
+
                 <DialogContent>
                     {
                         !isComplete && (
@@ -95,19 +98,22 @@ export default function AlertDialogSlide(props) {
                                         <td align='center'>
                                             <TextField
                                                 variant="standard"
-                                                value={44}
+                                                value={getLastOfferById(item.offers)?.quantity}
+                                                disabled
                                             />
                                         </td>
                                         <td align='center'>
                                             <TextField
                                                 variant="standard"
-                                                value={'$5.000'}
+                                                value={getLastOfferById(item.offers)?.price}
+                                                disabled
                                             />
                                         </td>
                                         <td align='center'>
                                             <TextField
                                                 variant="standard"
-                                                value={'$220.000'}
+                                                value={getLastOfferById(item.offers)?.total}
+                                                disabled
                                             />
                                         </td>
                                     </tr>
@@ -115,34 +121,34 @@ export default function AlertDialogSlide(props) {
                         )
                     }
                     {
-                        isComplete&&isConfirm && (
+                        isComplete && isConfirm && (
                             <DialogContentText id="alert-dialog-slide-description">
                                 Oferta confirmada
                             </DialogContentText>
                         )
                     }
-                         {
-                        isComplete&&!isConfirm && (
+                    {
+                        isComplete && !isConfirm && (
                             <React.Fragment>
-                            <DialogContentText id="alert-dialog-slide-description">
-                                Indicanos por favor el motivo del rechazo
-                               
-                            </DialogContentText>
-                             <TextField
-                             multiline
-                             sx={{width:'100%',mt:1}}
-                             rows={4}
-                             placeholder={'Escribir un mensaje'}
-                         />
-                         </React.Fragment>
+                                <DialogContentText id="alert-dialog-slide-description">
+                                    Indicanos por favor el motivo del rechazo
+
+                                </DialogContentText>
+                                <TextField
+                                    multiline
+                                    sx={{ width: '100%', mt: 1 }}
+                                    rows={4}
+                                    placeholder={'Escribir un mensaje'}
+                                />
+                            </React.Fragment>
                         )
                     }
                 </DialogContent>
                 <DialogActions>
-                    <Button style={{ display: isComplete&&!isConfirm ? 'none' : 'inline' }}  onClick={handleClose}>Cerrar</Button>
+                    <Button style={{ display: isComplete && !isConfirm ? 'none' : 'inline' }} onClick={handleClose}>Cerrar</Button>
                     <Button color='error' style={{ display: isComplete ? 'none' : 'inline' }} onClick={rechazarConfirm}>Rechazar</Button>
-                    <Button color='secondary' style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Confirmar</Button>
-                    <Button color='error' style={{ display: isComplete&&!isConfirm ? 'inline' : 'none' }} onClick={rechazar}>Rechazar</Button>
+                    <Button color='secondary' style={{ display: isComplete ? 'none' : 'inline' }} onClick={()=>crearTag(2)}>Confirmar</Button>
+                    <Button color='error' style={{ display: isComplete && !isConfirm ? 'inline' : 'none' }} onClick={()=>crearTag(5)}>Rechazar</Button>
 
                 </DialogActions>
             </Dialog>

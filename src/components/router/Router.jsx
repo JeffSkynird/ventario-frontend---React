@@ -14,7 +14,7 @@ import Pacients from '../../features/Pacients'
 import PacientForm from '../../features/Pacients/components/Form'
 import Orders from '../../features/Orders'
 import OrdersForm from '../../features/Orders/components/Form'
- import Exam from '../../features/Exams'
+ import Exam from '../../features/vendedor/Exams'
 /*import ExamForm from '../../features/Exams/components/Form' */
 import Result from '../../features/Results'
 import ResultForm from '../../features/Results/components/Form'
@@ -40,6 +40,7 @@ import VerDatos from  '../../features/admin/VerDatos'
 import Configuraciones from  '../../features/admin/Configuraciones'
 
 import Autorizaciones from '../../features/admin/Autorizaciones'
+import RecuperarPass from "../../features/Login/RecuperarPass";
 
 export default function Router() {
     return (
@@ -92,6 +93,7 @@ export default function Router() {
            <Route path="/autorizaciones" element={<RequireAuth><Autorizaciones /></RequireAuth>} /> 
 
             <Route path="login" element={<Login />} />
+            <Route path="/recover_pass" element={<RecuperarPass />} />
             <Route render={() => <Redirect to="/buscador" />} />
         </Routes>
     )

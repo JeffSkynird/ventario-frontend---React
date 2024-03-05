@@ -1,22 +1,32 @@
-import { Button, Grid, Paper, Typography } from '@mui/material'
+import { Button, Grid, IconButton, Paper, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import './style.css'
-export default function index() {
+import { obtenerTodosFiltro, sendClientMessage } from '../../../../../services/api/chats/chats';
+import RefreshIcon from '@mui/icons-material/Refresh';
+
+export default function index(props) {
+    const {item} = props
     const messagesEndRef = useRef(null);
 
-    const [messages, setMessages] = useState([
-        { sender: "Tú", message: "Hola" },
-        { sender: "Vendedor", message: "Hola, ¿cómo estás?" },
-        { sender: "Tú", message: "Estoy bien, gracias. ¿Y tú?" },
-        {
-            sender: "Sistema",
-            message: "# oferta editada #",
-        },
-        {
-            sender: "Sistema",
-            message: "A tu oferta le quedan 12 horas",
-        },
-    ]);
+    const [messages, setMessages] = useState([]);
+    useEffect(() => {
+        if(props.processID){
+            async function fetch() {
+                const data = await obtenerTodosFiltro(props.token, props.processID)
+                //        { sender: "Tú", message: "Hola" },
+                //        { sender: "Vendedor", message: "Hola, ¿cómo estás?" },
+                /*
+                  {
+                    sender: "Sistema",
+                    message: "# oferta editada #",
+                  },
+                */
+                setMessages(data)
+            }
+            fetch();
+        }
+    
+    }, [])
     useEffect(() => {
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
@@ -25,7 +35,24 @@ export default function index() {
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
     };
+    const refreshSearch = async () => {
+        const data = await obtenerTodosFiltro(props.token, props.processID)
+        setMessages(data)
+    }
+    const sendMessage = async () => {
 
+        const obj = {
+            "emisorId":props.userId,
+            "receptorId":props.customerId,
+            "typeId":2,
+            "message":inputValue,
+            "processId":props.processID
+        }
+       const data = await sendClientMessage(obj, props.token)
+        if(data.status=="success"){
+            refreshSearch()
+        }
+    }
     const handleSendMessage = () => {
         if (inputValue) {
             setMessages([
@@ -35,6 +62,11 @@ export default function index() {
             setInputValue("");
         }
     };
+    
+  const getLastOfferById = (offers) => {
+    offers.sort((a, b) => (a.id > b.id) ? 1 : -1)
+    return offers[offers.length-1]
+  }
     return (
         <Grid container spacing={2}>
             <Grid item xs={12} md={6} >
@@ -50,10 +82,10 @@ export default function index() {
                                     <th>Status</th>
                                 </tr>
                                 <tr>
-                                    <td>12/01/2024</td>
-                                    <td>16:30</td>
+                                    <td>{getLastOfferById(item.visits)?.date||'-'}</td>
+                                    <td>{getLastOfferById(item.visits)?.schedule?.schedule||'-'}</td>
                                     <td>No</td>
-                                    <td>Aceptada</td>
+                                    <td>{getLastOfferById(item.visits)?.visitStatus.status||'-'}</td>
                                 </tr>
                             </table>
                         </Paper>
@@ -68,19 +100,9 @@ export default function index() {
                                     <th>Precio Neto</th>
                                 </tr>
                                 < tr >
-                                    < td > Producto 1 </ td >
-                                    < td > 44 </ td >
-                                    < td > $5.000 </ td >
-                                </tr>
-                                < tr >
-                                    < td > Producto 2 </ td >
-                                    < td > 12 </ td >
-                                    < td > $7.890 </ td >
-                                </tr>
-                                < tr >
-                                    < td > Producto 3 </ td >
-                                    < td > 3 </ td >
-                                    < td > $23.500 </ td >
+                                    < td > {item.box?.product?.name.substring(0, 12)||'-'}... </ td >
+                                    < td > {getLastOfferById(item.offers)?.quantity||'-'} </ td >
+                                    < td > {getLastOfferById(item.offers)?.price||'-'} </ td >
                                 </tr>
                             </table>
                             <table border="1" style={{ width: '40%', height: 10, }}>
@@ -90,8 +112,8 @@ export default function index() {
                                     <th>Status</th>
                                 </tr>
                                 < tr >
-                                    < td > $220.000 </ td >
-                                    < td > Rechazada </ td >
+                                    < td > {getLastOfferById(item.offers)?.total||'-'} </ td >
+                                    < td > {getLastOfferById(item.offers)?.offerStatus?.status||'-'} </ td >
                                 </tr>
 
                             </table>
@@ -102,16 +124,21 @@ export default function index() {
             </Grid>
             <Grid item xs={12} md={6}>
                 <Paper style={{padding:10}}>
-                    <Typography style={{ fontWeight: 'bold' ,marginBottom:5}}>Mensajes</Typography>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <Typography style={{ fontWeight: 'bold' }}>Mensajes</Typography>
+                    <IconButton aria-label="delete" onClick={refreshSearch}>
+                        <RefreshIcon />
+                    </IconButton>
+                </div>
                     <div className="chat-container">
                         <div className="chat-messages">
                             {messages.map((message, index) => (
                                 <div
                                     key={index}
-                                    className={`message ${message.sender === "Tú" ? "sent  message-self" : "received"
+                                    className={`message ${message.emisorId === props.userId? "sent  message-self" : "received"
                                         }  `}
                                 >
-                                    <div className="message-sender">{message.sender}</div>
+                                    <div className="message-sender">{message.emisorId == props.userId ? "Yo" : message?.emisor?.name}</div>
                                     <div className="message-content">{message.message}</div>
                                 </div>
                             ))}
@@ -125,7 +152,7 @@ export default function index() {
                                 value={inputValue}
                                 onChange={handleInputChange}
                             />
-                            <Button onClick={handleSendMessage}>Enviar</Button>
+                            <Button onClick={sendMessage}>Enviar</Button>
                         </Paper>
                     </div>
                 </Paper>

@@ -6,9 +6,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import { asignarTag, crear } from '../../../services/api/tags/tags';
-import { useAuth } from '../../../hooks/useAuth';
+import { asignarTag, crear } from '../../../../services/api/tags/tags';
+import { useAuth } from '../../../../hooks/useAuth';
 import { Box, Checkbox, Chip, FormControlLabel, TextField, Typography } from '@mui/material';
+import { crearOferta, editarOferta } from '../../../../services/api/processes/processes';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -17,41 +18,83 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AlertDialogSlide(props) {
     const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
 
-    const { open, setOpen } = props;
+    const { open, setOpen,item } = props;
     const [name, setName] = React.useState('');
     const [isComplete, setIscomplete] = React.useState(false)
+    const [offer,setOffer] = React.useState('')
+    const [offerData,setOfferData] = React.useState(null)
+
+    React.useEffect(() => {
+        if(props.isEdited){
+            console.log("CACA")
+            console.log(item)
+            setOfferData(item.box?.product)
+            setOffer(getLastOfferById(item.offers)?.quantity)
+        }else{
+            console.log("COCA")
+            setOfferData(item)
+        }
+    }, [props.isEdited])
     const handleClickOpen = () => {
         setOpen(true);
     };
-
+    const getLastOfferById = (offers) => {
+        offers.sort((a, b) => (a.id > b.id) ? 1 : -1)
+        return offers[offers.length-1]
+      }
     const handleClose = () => {
         setIscomplete(false)
+        if(!props.isEdited){
+            setOffer('')
+        }
         setOpen(false);
     };
     const crearTag = async () => {
         mostrarLoader(true)
-        const tiempoEspera = 1000;
-        setTimeout(() => {
-            if (isComplete == false) {
-                setIscomplete(true)
+        let data1
+        if(props.isEdited){
+            let obj = {
+                "id":getLastOfferById(item.offers).id,
+                "quantity":offer,
+                "price":offerData.unitPrice,
+                "total":(offer) * Number(offerData.unitPrice),
             }
+             data1 = await editarOferta(obj, usuario.token)
+        }else{
+            let obj = {
+                "quantity":offer,
+                "price":offerData.unitPrice,
+                "total":(offer) * Number(offerData.unitPrice),
+                "statusId":1,
+                "processId":null,
+                'boxId':offerData.boxid,
+                "clientId":usuario.user.id
+            }
+             data1 = await crearOferta(obj, usuario.token)
+        }
+        mostrarLoader(false)
+        mostrarNotificacion({ type: data1.status, message: data1.message })
+        if(data1.status == 'success'){
+            setIscomplete(true)
 
-            mostrarLoader(false)
-        }, tiempoEspera);
-
+        }
     }
 
-    const asignar = async (id) => {
+    const confirm = async (id) => {
         mostrarLoader(true)
         let obj = {
-            "tag_id": id,
-            "generation_id": props.generation_id
+            "quantity":offer,
+            "price":offerData.unitPrice,
+            "total":(offer) * Number(offerData.unitPrice),
+            "statusId":1,
+            "processId":null,
         }
-        const data1 = await asignarTag(obj, usuario.token)
+        const data1 = await crearOferta(obj, usuario.token)
         mostrarLoader(false)
-        mostrarNotificacion(data1)
-
-        handleClose()
+        mostrarNotificacion({ type: data1.status, message: data1.message })
+        if(data1.type == 'success'){
+            handleClose()
+        }
     }
     return (
         <div>
@@ -69,17 +112,16 @@ export default function AlertDialogSlide(props) {
                 }
                 {
                     !props.isEdited && (
-                        <DialogTitle>{!isComplete ? "Oferta" : "Oferta enviada"}</DialogTitle>
+                        <DialogTitle>{!isComplete ? "Oferta" : "Oferta"}</DialogTitle>
                     )
                 }
                 <DialogContent>
                     {
                         !isComplete && (
                             <><DialogContentText style={{ display: props.isEdited ? "none" : 'inline' }} id="alert-dialog-slide-description">
-                                EI Vendedor tendrá un limite de tiempo de 48 horas
-                                para confirmar si rechaza o acepta. En caso de
-                                sobrepasar este tiempo se considerará rechazado.
-                            </DialogContentText><table border="1" style={{ width: '100%' }}>
+                                El vendedor tendrá un límite de 72 horas para indicar aceptación o rechazo de la propuesta. En caso de no responder en este plazo se considerará como rechazo.
+                            </DialogContentText>
+                            <table border="1" style={{ width: '100%' }}>
                                     <tr>
                                         <th>Cantidad</th>
                                         <th>Precio Neto</th>
@@ -89,19 +131,22 @@ export default function AlertDialogSlide(props) {
                                         <td align='center'>
                                             <TextField
                                                 variant="standard"
-                                                value={44}
+                                                value={offer}
+                                                onChange={(e) => setOffer(e.target.value)}
                                             />
                                         </td>
                                         <td align='center'>
                                             <TextField
                                                 variant="standard"
-                                                value={'$5.000'}
+                                                value={offerData?.unitPrice}
+                                                disabled
                                             />
                                         </td>
                                         <td align='center'>
                                             <TextField
                                                 variant="standard"
-                                                value={'$220.000'}
+                                                value={(offer) * Number(offerData?.unitPrice)}
+                                                disabled
                                             />
                                         </td>
                                     </tr>
@@ -111,7 +156,7 @@ export default function AlertDialogSlide(props) {
                     {
                         isComplete && (
                             <DialogContentText id="alert-dialog-slide-description">
-                                {!props.isEdited ? "Lorem ipsum dolor sit amet consectetur adipiscing elit mus, massa convallis ac hendrerit malesuada non primis, laoreet aliquet et feugiat senectus accumsan conubia. Quis sem felis vivamus torquent auctor pulvinar pretium luctus eu risus tristique, fringilla facilisis curabitur natoque gravida vulputate primis feugiat dictumst" : "Cambios guardados"}
+                                {!props.isEdited ? "Oferta Enviada" : "Cambios guardados"}
                             </DialogContentText>
                         )
                     }
@@ -120,12 +165,12 @@ export default function AlertDialogSlide(props) {
                     <Button onClick={handleClose}>Cerrar</Button>
                     {
                         !props.isEdited && (
-                            <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Generar oferta</Button>
+                            <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag} disabled={offer==''}>Generar oferta</Button>
                         )
                     }
                     {
                         props.isEdited && (
-                            <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag}>Guardar cambios</Button>
+                            <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag} disabled={offer==''}>Guardar cambios</Button>
                         )
                     }
                 </DialogActions>

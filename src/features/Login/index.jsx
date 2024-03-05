@@ -28,12 +28,11 @@ export default function Login() {
   });
   useEffect(() => {
     if (usuario != null) {
-      console.log(usuario)
       if (usuario.user.type == "Comprador") {
         navigate("/")
-      } else if(usuario.user.type =="Vendedor"){
+      } else if (usuario.user.type == "Vendedor") {
         navigate("/activos")
-      } else if(usuario.user.type =="Admin"){
+      } else if (usuario.user.type == "Admin") {
         navigate('/datos')
       }
     }
@@ -42,22 +41,22 @@ export default function Login() {
 
   const entrar = async (dt) => {
     mostrarLoader(true)
-    try{
+    try {
       let obj = {
         email: dt.email, password: dt.password
       }
       const data = await iniciarSesion(obj)
       mostrarLoader(false)
-      mostrarNotificacion({ type: data.status,message: data.message })
-      if (data.status=="success") {
-        let encrypt = encriptarJson(JSON.stringify({ user:{names:data.data.user.name,email:data.data.user.email,avatar:data.data.user.avatar,id:data.data.user.id,type:data.data.user.rol.rol}, token: data.data.token }))
+      mostrarNotificacion({ type: data.status, message: data.message })
+      if (data.status == "success") {
+        let encrypt = encriptarJson(JSON.stringify({ user: { companyId: data.data.user.companyId, names: data.data.user.name, email: data.data.user.email, avatar: data.data.user.avatar, id: data.data.user.id, type: data.data.user.rol.rol }, token: data.data.token }))
         cargarUsuario(encrypt)
         guardarSession(encrypt);
       }
-    }catch(e){
+    } catch (e) {
       console.log(e)
       mostrarLoader(false)
-      mostrarNotificacion({ type: e.response.data.status,message: e.response.data.message})
+      mostrarNotificacion({ type: e.response.data.status, message: e.response.data.message })
     }
   }
   const handleMouseDownPassword = (event) => {
@@ -66,13 +65,11 @@ export default function Login() {
   const handleAlignment = (event, newAlignment) => {
     setAlignment(newAlignment);
   };
-   
+
   return (
     <Grid container sx={{ height: '100vh', backgroundSize: 'cover' }}>
       <Grid item xs={0} md={7} sx={{ display: { xs: 'none', md: 'block' }, backgroundColor: '#00050d' }}>
         <Box sx={{ borderBottomRightRadius: 25, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundImage: `url(${fondo})`, height: '100vh', backgroundSize: 'cover' }}>
-          {/*           <Lottie animationData={books} style={{ height: '85vh' }} />
- */}
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <img src={logo} alt="" style={{ width: '60%', height: '30%' }} />
           </Box>
@@ -86,18 +83,13 @@ export default function Login() {
 
 
       </Grid>
-      <Grid item xs={12} md={5} sx={{ backgroundColor:  theme.palette.mode!="dark"?'#F2F7F2':'auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Grid item xs={12} md={5} sx={{ backgroundColor: theme.palette.mode != "dark" ? '#F2F7F2' : 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Grid container spacing={2} >
           <Grid item xs={12}>
-
-
-            {/*      <Typography variant="body1" sx={{ textAlign: 'center' }}>
-Acceso exclusivo con membresía
-</Typography> */}
           </Grid>
           <Grid item xs={12} >
-            <Paper sx={{ marginRight:{ lg:'20%',md:'10%',sm:'10%',xs:'2%'}, marginLeft:{lg:'20%',md:'10%',sm:"10%",xs:'2%'}, }}>
-              <Box sx={{ backgroundColor: '#076B00',borderTopLeftRadius:3,borderTopRightRadius:3,padding:2 }}>
+            <Paper sx={{ marginRight: { lg: '20%', md: '10%', sm: '10%', xs: '2%' }, marginLeft: { lg: '20%', md: '10%', sm: "10%", xs: '2%' }, }}>
+              <Box sx={{ backgroundColor: '#076B00', borderTopLeftRadius: 3, borderTopRightRadius: 3, padding: 2 }}>
                 <Typography variant="h4" sx={{ textAlign: 'center', color: '#FFF' }}>
                   Iniciar Sesión
                 </Typography>
@@ -163,7 +155,7 @@ Acceso exclusivo con membresía
                 </Grid>
                 <Grid item xs={12}>
                   <Button
-                    //onClick={handleSubmit(entrar)}
+                    onClick={()=>navigate('/recover_pass')}
                     fullWidth
                     variant="text"
                   >

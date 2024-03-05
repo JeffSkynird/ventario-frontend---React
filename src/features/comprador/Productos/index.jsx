@@ -78,7 +78,7 @@ export default function index() {
   },
   {
     Header: 'Imagen',
-    Cell: ({ row }) => ( <img src={"https://images.pexels.com/photos/39803/pexels-photo-39803.jpeg?cs=srgb&dl=food-healthy-apple-39803.jpg&fm=jpg"} style={{width:50,height:50}}/>)
+    Cell: ({ row }) => ( <img src={row.original?.boxes[0]?.boxImages[0]?.url} style={{width:50,height:50}}/>)
   },
   {
     Header: 'Venta mínima',

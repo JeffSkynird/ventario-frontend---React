@@ -7,94 +7,69 @@ import { Box, Breadcrumbs, Chip, Grid, IconButton, Skeleton, Typography } from '
 import Link from '@mui/material/Link';
 import { useNavigate } from 'react-router-dom';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import {  obtenerPdf, obtenerPorTag, obtenerTodos } from '../../../services/api/generations/generations';
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 import Modal from './components/Modal';
-import { crear ,eliminar, eliminarPorGeneracion, obtenerTodos as obtenerTags} from '../../../services/api/tags/tags';
+import { obtenerTodos } from '../../../services/api/processes/processes';
+import { getLastOfferById } from '../../../helpers/General';
 export default function index() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState(0)
-  const { isLoading, isError, data, error , refetch,} = useQuery(['getResults',usuario.token,selectedTag], obtenerTodos)
+  const { isLoading, isError, data, error , refetch,} = useQuery(['getResults',usuario.token,'vendedor',usuario.user.companyId], obtenerTodos)
   const navigate = useNavigate();
   const [tags, setTags] = useState([])
-
-  React.useEffect(() => {
-    obtenerLista()
-  },[])
-  const eliminarRegistro = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminar(id,usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    obtenerLista()
-  }
-  async function obtenerLista() {
-    const data1 = await obtenerTags(usuario.token)
-    setTags(data1.data)
-  }
-  
- const handleDelete = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminarPorGeneracion(id,usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    refetch()
- }
  
-  const columns = [
-    {
-      Header: 'Acciones',
-      accessor: 'action',
-      Cell: (value) => (
-        <div style={{display:'flex'}}>
-          <IconButton aria-label="delete" onClick={() => {
-            navigate('/activos/'+value.row.original.id, { state:{isEdited:true} })
-          }
-          }>
-            <RemoveRedEyeOutlinedIcon />
-          </IconButton>
-     
-        </div>
-
-      )
-    },
-    {
-      Header: 'Productos',
-      accessor: 'tag',
-      Cell: ({ row }) => (<Chip label={row.original.tag} color="primary"/>)
-
-    },
-    {
-      Header: 'Fecha',
-      accessor: 'status',
-    },
-    {
-      Header: 'Estados',
-      accessor: 'estado',
-    },
-    {
-      Header: 'Visita',
-      accessor: 'visita',
-    },
-    {
-      Header: 'Status',
-      accessor: 'statuss',
-    },
-    {
-      Header: 'Oferta',
-      accessor: 'oferta',
-    },
-    {
-      Header: 'Formulario',
-      accessor: 'formulario',
-      Cell: ({ row }) => ( row.original.tag!=null?<Chip label={"Formulario"+row.original.formulario} color="primary" variant="outlined"/>:<Modal refetch={refetch} obtenerLista={obtenerLista} tags={tags} generation_id={row.original.id}/>)
-    },
-    {
-      Header: 'Fecha de retiro',
-      accessor: 'fechaRetiro',
-    },
+ const columns = [
+  {
+    Header: 'Acciones',
+    accessor: 'action',
+    Cell: (value) => (
+      <div style={{display:'flex'}}>
+        <IconButton aria-label="delete" onClick={() => {
+          navigate('/activos/'+value.row.original.id, { state:{item: value.row.original,isNew:false}})
+          //navigate('/activos/'+value.row.original.id, { state:{isEdited:true} })
+        }
+        }>
+          <RemoveRedEyeOutlinedIcon />
+        </IconButton>
    
-  ]
+      </div>
+
+    )
+  },
+  {
+    Header: 'Productos',
+    accessor: 'tag',
+    Cell: ({ row }) => (<Chip label={row.original?.box?.descriptionVentario} color="primary"/>)
+
+  },
+  {
+    Header: 'Fecha',
+    accessor: 'createdAt',
+  },
+  {
+    Header: 'Estados',
+    accessor: 'statusId',
+  },
+  {
+    Header: 'Visita',
+    accessor: 'visits',
+    Cell: ({ row }) => (<span>{row.original?.visits?.length>0?getLastOfferById(row.original?.visits)?.date:"-"}</span>)
+  },
+  {
+    Header: 'Oferta',
+    accessor: 'oferta',
+    Cell: ({ row }) => (<span>{row.original?.offers?.length>0?"$"+getLastOfferById(row.original?.offers)?.total:"-"}</span>)
+  },
+  {
+    Header: 'Formulario',
+    accessor: 'formulario',
+    Cell: ({ row }) => ( <Chip label={"Formulario"+1} color="primary" variant="outlined"/>)
+  },
+  {
+    Header: 'Fecha de retiro',
+    accessor: 'updatedAt',
+  },
+]
   const breadcrumbs = [
     <Link underline="hover" key="1" color="inherit" href="/" >
       SISTEMA
@@ -137,7 +112,7 @@ export default function index() {
               <Skeleton height={100} />
             </Box>
           )}
-          {!isLoading && <Table columns={columns} data={!isLoading &&!isError? data.data : []}  />}
+          {!isLoading && <Table columns={columns} data={!isLoading &&!isError? data : []}  />}
 
         </Grid>
       </Grid>

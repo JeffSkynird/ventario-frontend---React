@@ -1,32 +1,72 @@
-import { Button, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, Typography } from '@mui/material'
+import { Button, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import InventoryIcon from '@mui/icons-material/Inventory';
 import './style.css'
-export default function index() {
+import { obtenerTodosFiltro, sendVendorMessage } from '../../../../../services/api/chats/chats';
+import { obtenerTodosFiltro as obtenerCompleto } from '../../../../../services/api/processes/processes';
+import { useNavigate } from 'react-router-dom';
+import RefreshIcon from '@mui/icons-material/Refresh';
+export default function index(props) {
+    const { item } = props
     const messagesEndRef = useRef(null);
 
     const [messages, setMessages] = useState([
-        { sender: "Tú", message: "Hola" },
-        { sender: "Vendedor", message: "Hola, ¿cómo estás?" },
-        { sender: "Tú", message: "Estoy bien, gracias. ¿Y tú?" },
-        {
-            sender: "Sistema",
-            message: "# oferta editada #",
-        },
-        {
-            sender: "Sistema",
-            message: "A tu oferta le quedan 12 horas",
-        },
     ]);
+    const [otherProcesses, setOtherProcesses] = useState([])
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (props.processID) {
+            async function fetch() {
+                console.log("FECHANDO")
+                const data = await obtenerTodosFiltro(props.token, props.processID)
+                const data2 = await obtenerCompleto({ customerId: props.customerId }, props.token, 'completo', props.companyId)
+                //        { sender: "Tú", message: "Hola" },
+                //        { sender: "Vendedor", message: "Hola, ¿cómo estás?" },
+                /*
+                  {
+                    sender: "Sistema",
+                    message: "# oferta editada #",
+                  },
+                */
+                console.log(data2)
+                console.log(data)
+                setMessages(data)
+                setOtherProcesses(data2)
+
+            }
+            fetch();
+        }
+
+    }, [])
     useEffect(() => {
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
     const [inputValue, setInputValue] = useState("");
 
+
+    const refreshSearch = async () => {
+        const data = await obtenerTodosFiltro(props.token, props.processID)
+        setMessages(data)
+    }
+    
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
     };
+    const sendMessage = async () => {
 
+        const obj = {
+            "emisorId":props.userId,
+            "receptorId":props.customerId,
+            "typeId":2,
+            "message":inputValue,
+            "processId":props.processID
+        }
+       const data = await sendVendorMessage(obj, props.token)
+        if(data.status=="success"){
+            refreshSearch()
+        }
+    }
     const handleSendMessage = () => {
         if (inputValue) {
             setMessages([
@@ -36,6 +76,10 @@ export default function index() {
             setInputValue("");
         }
     };
+    const getLastOfferById = (offers) => {
+        offers.sort((a, b) => (a.id > b.id) ? 1 : -1)
+        return offers[offers.length - 1]
+    }
     return (
         <Grid container spacing={2}>
             <Grid item xs={6} >
@@ -51,10 +95,10 @@ export default function index() {
                                     <th>Status</th>
                                 </tr>
                                 <tr>
-                                    <td>12/01/2024</td>
-                                    <td>16:30</td>
+                                    <td>{getLastOfferById(item.visits)?.date || '-'}</td>
+                                    <td>{getLastOfferById(item.visits)?.schedule?.schedule || '-'}</td>
                                     <td>No</td>
-                                    <td>Aceptada</td>
+                                    <td>{getLastOfferById(item.visits)?.visitStatus.status || '-'}</td>
                                 </tr>
                             </table>
                         </Paper>
@@ -69,20 +113,11 @@ export default function index() {
                                     <th>Precio Neto</th>
                                 </tr>
                                 < tr >
-                                    < td > Producto 1 </ td >
-                                    < td > 44 </ td >
-                                    < td > $5.000 </ td >
+                                    < td > {item.box?.product?.name.substring(0, 12) || '-'}... </ td >
+                                    < td > {getLastOfferById(item.offers)?.quantity || '-'} </ td >
+                                    < td > {getLastOfferById(item.offers)?.price || '-'} </ td >
                                 </tr>
-                                < tr >
-                                    < td > Producto 2 </ td >
-                                    < td > 12 </ td >
-                                    < td > $7.890 </ td >
-                                </tr>
-                                < tr >
-                                    < td > Producto 3 </ td >
-                                    < td > 3 </ td >
-                                    < td > $23.500 </ td >
-                                </tr>
+
                             </table>
                             <table border="1" style={{ width: '40%', height: 10 }}>
                                 <caption style={{ fontWeight: 'bold' }}>-</caption>
@@ -91,8 +126,8 @@ export default function index() {
                                     <th>Status</th>
                                 </tr>
                                 < tr >
-                                    < td > $220.000 </ td >
-                                    < td > Rechazada </ td >
+                                    < td > {getLastOfferById(item.offers)?.total || '-'} </ td >
+                                    < td > {getLastOfferById(item.offers)?.offerStatus?.status || '-'} </ td >
                                 </tr>
 
                             </table>
@@ -102,16 +137,21 @@ export default function index() {
                 </Grid>
             </Grid>
             <Grid item xs={6}>
-                <Typography style={{ fontWeight: 'bold' }}>Mensajes</Typography>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <Typography style={{ fontWeight: 'bold' }}>Mensajes</Typography>
+                    <IconButton aria-label="delete" onClick={refreshSearch}>
+                        <RefreshIcon />
+                    </IconButton>
+                </div>
                 <div className="chat-container">
                     <div className="chat-messages">
                         {messages.map((message, index) => (
                             <div
                                 key={index}
-                                className={`message ${message.sender === "Tú" ? "sent  message-self" : "received"
+                                className={`message ${message.emisorId === props.userId ? "sent  message-self" : "received"
                                     }  `}
                             >
-                                <div className="message-sender">{message.sender}</div>
+                                <div className="message-sender">{message.emisorId == props.userId ? "Yo" : message?.emisor?.name}</div>
                                 <div className="message-content">{message.message}</div>
                             </div>
                         ))}
@@ -125,7 +165,7 @@ export default function index() {
                             value={inputValue}
                             onChange={handleInputChange}
                         />
-                        <Button onClick={handleSendMessage}>Enviar</Button>
+                        <Button onClick={sendMessage}>Enviar</Button>
                     </div>
                 </div>
             </Grid>
@@ -133,46 +173,20 @@ export default function index() {
             <Grid xs={12}>
 
                 <List dense={true} sx={{ height: 150, overflowY: 'auto' }} subheader={
-                    <ListSubheader component="div" id="nested-list-subheader">
+                    <ListSubheader component="div" id="nested-list-subheader" sx={{ fontWeight: 'bold' }}>
                         Procesos activos del comprador
                     </ListSubheader>
                 }>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <InventoryIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Producto 1"  secondary="Producto de descripción" />
-                        </ListItemButton>
-
-                    </ListItem>
-                    <ListItem disablePadding>
-
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <InventoryIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Producto 2"  secondary="Producto de descripción"  />
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <InventoryIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Producto 3"   secondary="Producto de descripción"  />
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <InventoryIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Producto 4"   secondary="Producto de descripción" />
-                        </ListItemButton>
-                    </ListItem>
+                    {
+                        otherProcesses.map((e, index) => (
+                            <ListItem disablePadding key={index}>
+                                <ListItemButton onClick={() => navigate('/activos/' + e.id, { state: { item: e, isNew: false } })
+                                }>
+                                    <ListItemText primary={e?.box?.product?.name} secondary={e?.box?.product?.description} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))
+                    }
                 </List>
             </Grid>
         </Grid>
