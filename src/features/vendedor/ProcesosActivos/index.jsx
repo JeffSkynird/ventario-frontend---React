@@ -1,22 +1,42 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useAuth } from '../../../hooks/useAuth';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Table from '../../../components/table/Table'
 import { Box, Breadcrumbs, Chip, Grid, IconButton, Skeleton, Typography } from '@mui/material';
 import Link from '@mui/material/Link';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
  import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 import Modal from './components/Modal';
 import { obtenerTodos } from '../../../services/api/processes/processes';
  export default function index() {
+  const { state } = useLocation();
+
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState(0)
   const { isLoading, isError, data, error , refetch,} = useQuery(['getResults',usuario.token,'comprador',usuario.user.id], obtenerTodos)
   const navigate = useNavigate();
   const [tags, setTags] = useState([])
 
+  useEffect(() => {
+    if(data?.length!=0&&state?.created!=undefined){
+      console.log("ENTRO")
+      console.log(state)
+      let t = buscarId(state?.created)
+      console.log("ENTRO2")
+      console.log(t)
+      if(t!=undefined){
+        navigate('/buscador/'+t.id, { state:{item: t,isNew:false}})
+
+      }
+    }
+  }, [data])
+
+  const buscarId = (id) => {
+    console.log(data)
+    return data.find((tag) => tag.id === id)
+  }
 
   const columns = [
     {

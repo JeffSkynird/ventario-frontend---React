@@ -12,6 +12,7 @@ import { Box, Checkbox, Chip, FormControl, FormControlLabel, InputLabel, MenuIte
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { crearVisita, editarVisita, obtenerHorarios } from '../../../../services/api/processes/processes';
+import { useNavigate } from 'react-router-dom';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -19,17 +20,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function AlertDialogSlide(props) {
     const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
+    const navigate = useNavigate();
 
     const { open, setOpen, item } = props;
     const [name, setName] = React.useState('');
-    const [date, setDate] = React.useState(new Date());
+    const [date, setDate] = React.useState("");
     const [time, setTime] = React.useState('');
     const [timeData, setTimeData] = React.useState([]);
 
     const [isComplete, setIscomplete] = React.useState(false)
 
     React.useEffect(() => {
-        if(props.isEdited){
+        if (props.isEdited) {
             setDate(getLastOfferById(item.visits)?.date)
             setTime(getLastOfferById(item.visits)?.schedulesId)
         }
@@ -70,17 +72,43 @@ export default function AlertDialogSlide(props) {
         }
 
     }
+    const validate = () => {
+        console.log(time)
+        if (date == null ||date == '') {
+            mostrarNotificacion({ type: 'error', message: 'Seleccione una fecha' })
+            return false
+        }
+        if (time == ''||time==null||time==undefined) {
+            mostrarNotificacion({ type: 'error', message: 'Seleccione un horario' })
+            return false
+        }
+        return true
+    }
     const crearTag = async () => {
+        if (!validate()) {
+            return
+        }
         mostrarLoader(true)
         let data1
-        if(props.isEdited){
-            let obj = {
-                "id":getLastOfferById(item.visits).id,
-                "date": formatDate(date),
-                "schedulesId": time
+        if (props.isEdited) {
+            if (item.visits.length != 0) {
+                let obj = {
+                    "id": getLastOfferById(item.visits).id,
+                    "date": formatDate(date),
+                    "schedulesId": time
+                }
+                data1 = await editarVisita(obj, usuario.token)
+            } else {
+                let obj = {
+                    "date": formatDate(date),
+                    "inspection": "N/A",
+                    "schedulesId": time,
+                    "statusId": 1,
+                    "processId":item.id
+                }
+                data1 = await crearVisita(obj, usuario.token)
             }
-             data1 = await editarVisita(obj, usuario.token)
-        }else{
+        } else {
             let obj = {
                 "date": formatDate(date),
                 "inspection": "N/A",
@@ -90,20 +118,25 @@ export default function AlertDialogSlide(props) {
                 'boxId': item.boxid,
                 "clientId": usuario.user.id
             }
-            const data1 = await crearVisita(obj, usuario.token)
+            data1 = await crearVisita(obj, usuario.token)
         }
-       
+
         mostrarLoader(false)
         mostrarNotificacion({ type: data1.status, message: data1.message })
         if (data1.status == 'success') {
             setIscomplete(true)
-
+            if(!props.isEdited){
+               // navigate('/buscador/'+data1.data.processId,{state:{item: null,isNew:false}})
+                window.location.href = '/buscador/'+data1.data.processId
+            }else{
+                props.refresh()
+            }
         }
     }
     const getLastOfferById = (offers) => {
         offers.sort((a, b) => (a.id > b.id) ? 1 : -1)
-        return offers[offers.length-1]
-      }
+        return offers[offers.length - 1]
+    }
     const asignar = async (id) => {
         mostrarLoader(true)
         let obj = {
@@ -198,7 +231,7 @@ export default function AlertDialogSlide(props) {
                     <Button onClick={handleClose}>Cerrar</Button>
                     {
                         !props.isEdited && (
-                            <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag} disabled={date==null||time==''}>Agendar</Button>
+                            <Button style={{ display: isComplete ? 'none' : 'inline' }} onClick={crearTag} disabled={date == null || time == ''}>Agendar</Button>
                         )
                     }
                     {

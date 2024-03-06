@@ -10,6 +10,8 @@ export default function index(props) {
 
     const [messages, setMessages] = useState([]);
     useEffect(() => {
+        console.log("CULO")
+        console.log(props)
         if(props.processID){
             async function fetch() {
                 const data = await obtenerTodosFiltro(props.token, props.processID)

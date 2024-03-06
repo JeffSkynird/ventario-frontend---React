@@ -13,6 +13,7 @@ import { useLocation } from 'react-router-dom';
 import Detail from './components/Detail'
 import { useTheme } from '@emotion/react';
 import { obtenerTodosVendedorPagina } from '../../../services/api/products/products';
+import { obtenerPorId } from '../../../services/api/processes/processes';
 export default function index(props) {
   const [page, setPage] = useState(1);
   const { state } = useLocation();
@@ -23,6 +24,7 @@ export default function index(props) {
 
   const [value, setValue] = React.useState(0);
   const [productInfo, setProductInfo] = useState(null);
+  const [productObj, setProductObj] = useState(null)
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
   const [open3, setOpen3] = React.useState(false);
@@ -35,8 +37,9 @@ export default function index(props) {
   const matches = useMediaQuery(theme.breakpoints.down('sm'));
   const [productsRelated, setProductsRelated] = useState([])
   useEffect(() => {
+    console.log("AQUI")
+    console.log(state)
     if (state) {
-      console.log(state)
       if (state.isNew) {
         if (state.item.images != null) {
           console.log(state)
@@ -46,7 +49,7 @@ export default function index(props) {
           setImage4(state.item.images[3].url)
           setImage5(state?.item.images[4]?.url)
 
-        } else {
+        } else if (state.item.image) {
           setActiveImage(state.item.image)
 
           setImage2(state.item.image2)
@@ -54,27 +57,41 @@ export default function index(props) {
           setImage4(state.item.image4)
           setImage5(state.item.image5)
           searchRelatedProducts(1)
+        }else {
+          setActiveImage(state.item?.boxes[0]?.images[0]?.url)
+          
+          setImage2(state.item?.boxes[0]?.images[1]?.url)
+          setImage3(state.item?.boxes[0]?.images[2]?.url)
+          setImage4(state.item?.boxes[0]?.images[3]?.url)
+          setImage5(state.item?.boxes[0]?.images[4]?.url)
         }
         setProductInfo(state.item)
+        setProductObj(state.item)
       } else {
-        console.log(state.item)
-
-        setActiveImage(state.item?.box?.boxImages[0]?.url)
-        setImage2(state.item?.box?.boxImages[1]?.url)
-        setImage3(state.item?.box?.boxImages[2]?.url)
-        setImage4(state.item?.box?.boxImages[3]?.url)
-        setImage5(state.item?.box?.boxImages[4]?.url)
-        setProductInfo(state.item?.box?.product)
+        refreshSearch();
       }
-
-
+    }else {
+      refreshSearch();
     }
-  }, [])
+  }, [state])
+
+  const refreshSearch = async () => {
+    const dat = await obtenerPorId(id, usuario.token);
+    setActiveImage(dat[0]?.box?.boxImages[0]?.url)
+    setImage2(dat[0]?.box?.boxImages[1]?.url)
+    setImage3(dat[0]?.box?.boxImages[2]?.url)
+    setImage4(dat[0]?.box?.boxImages[3]?.url)
+    setImage5(dat[0]?.box?.boxImages[4]?.url)
+    setProductInfo(dat[0])
+    setProductObj(dat[0]?.box?.product)
+  }
 
   const searchRelatedProducts = async (pageValue) => {
-    const data = await obtenerTodosVendedorPagina(usuario.token, { vendorId: state.item.vendedorId, current: state.item.id }, pageValue)
-    console.log(data)
-    setProductsRelated(data)
+    if(state.item.vendedorId){
+      const data = await obtenerTodosVendedorPagina(usuario.token, { vendorId: state.item.vendedorId, current: state.item.id }, pageValue)
+      console.log(data)
+      setProductsRelated(data)
+    }
   }
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -112,15 +129,25 @@ export default function index(props) {
       fontSize: '18px'
     }
   };
+  console.log(productInfo)
+  console.log("SEXO")
+  console.log(state)
   return (
     <div>
-      <Modal isEdited={!state?.isNew} open={open} setOpen={setOpen} item={state.item} />
-      <ModalVisita isEdited={!state?.isNew} open={open2} setOpen={setOpen2} item={state.item} />
-      <ModalMensaje open={open3} setOpen={setOpen3} item={state.item} />
 
       <Grid container spacing={2} >
+      {
+        productInfo != null && (
+          <>
+            <Modal isEdited={!state?.isNew} open={open} setOpen={setOpen} item={productInfo} refresh={refreshSearch} />
+            <ModalVisita isEdited={!state?.isNew} open={open2} setOpen={setOpen2} item={productInfo} refresh={refreshSearch} />
+            <ModalMensaje open={open3} setOpen={setOpen3} item={productInfo} />
+
+          </>
+        )
+      }
         <Grid item xs={12}>
-          <Typography sx={{ fontWeight: 'bold' }}>Buscador / {productInfo?.name}</Typography>
+          <Typography sx={{ fontWeight: 'bold' }}>Buscador / {productObj?.name}</Typography>
         </Grid>
 
         <Grid item xs={12}>
@@ -153,17 +180,17 @@ export default function index(props) {
                   <img style={{ height: '200px', width: '200px' }} src={activeImage} alt="" />
                 </div>
                 <div  >
-                  <b>{productInfo?.name}</b><br />
-                  <span>{productInfo?.averageGrade} ★★★★☆ (36)</span><br />
-                  <span >Cantidad disponible: {productInfo?.totalUnits}</span><br />
-                  <span>Venta mínima de compra: ${productInfo?.minimumSale}</span><br />
+                  <b>{productObj?.name}</b><br />
+                  <span>{productObj?.averageGrade} ★★★★☆ (36)</span><br />
+                  <span >Cantidad disponible: {productObj?.totalUnits}</span><br />
+                  <span>Venta mínima de compra: ${productObj?.minimumSale}</span><br />
                   <span style={{ opacity: 0.8 }}>Comuna: Aríca</span><br />
                   <span style={{ opacity: 0.8 }}>Region: Tarapacá</span><br />
                   <span style={{ opacity: 0.8 }}>Tipo de producto: Uno</span><br />
                 </div>
                 <div style={{ width: matches ? 'auto' : 360 }}>
                   <b>Descripción adicional</b><br />
-                  <span>{productInfo?.description}</span>
+                  <span>{productObj?.description}</span>
                 </div>
               </Grid>
               <Grid item xs={12} md={2} style={{ display: matches ? 'block' : 'flex', gap: 10, flexDirection: 'column', justifyContent: 'center' }}>
@@ -207,7 +234,7 @@ export default function index(props) {
 
         </Grid>
 
-        {state?.isNew && (
+        {state?.isNew && productsRelated.length!=0 && (
           <div style={{ padding: 10, marginTop: 10 }}>
 
             <Grid item xs={12} style={{ marginTop: 20, marginBottom: 10 }}>
@@ -220,7 +247,7 @@ export default function index(props) {
                   productsRelated?.data?.map((item, index) => (
                     <Grid item xs={12} md={4}>
                       <div style={style.container} onClick={() => {
-                        navigate('/buscador/' + item.id, { state: item })
+                        navigate('/buscador/' + item.id, { state: {item,isNew:true} })
                       }}>
                         <div style={{ display: 'flex' }}>
                           <div style={style.imageContainer}>
@@ -241,7 +268,7 @@ export default function index(props) {
                   ))
                 }
               </Grid>
-              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }} >
                 <Pagination count={productsRelated?.totalPages} page={page} onChange={handleChange} />
 
               </Grid>
@@ -249,9 +276,9 @@ export default function index(props) {
             </Grid>
           </div>
         )}
-        {!state?.isNew && (
+        {(!state?.isNew && productInfo != null) && (
           <Grid item xs={12} >
-            <Detail item={state.item}  token={usuario.token} processID={id}  userId={usuario.user.id}/>
+            <Detail item={productInfo} token={usuario.token} processID={id} userId={usuario.user.id} />
 
           </Grid>
         )}

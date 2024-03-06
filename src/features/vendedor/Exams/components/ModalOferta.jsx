@@ -10,6 +10,7 @@ import { asignarTag, crear } from '../../../../services/api/tags/tags';
 import { useAuth } from '../../../../hooks/useAuth';
 import { Box, Checkbox, Chip, FormControlLabel, TextField, Typography } from '@mui/material';
 import { crearOferta, editarOferta } from '../../../../services/api/processes/processes';
+import { useNavigate } from 'react-router-dom';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -17,6 +18,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function AlertDialogSlide(props) {
     const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
+    const navigate = useNavigate();
 
     const { open, setOpen,item } = props;
     const [name, setName] = React.useState('');
@@ -53,13 +55,24 @@ export default function AlertDialogSlide(props) {
         mostrarLoader(true)
         let data1
         if(props.isEdited){
-            let obj = {
-                "id":getLastOfferById(item.offers).id,
-                "quantity":offer,
-                "price":offerData.unitPrice,
-                "total":(offer) * Number(offerData.unitPrice),
+            if(item.offers.length!=0){
+                let obj = {
+                    "id":getLastOfferById(item.offers).id,
+                    "quantity":offer,
+                    "price":offerData.unitPrice,
+                    "total":(offer) * Number(offerData.unitPrice),
+                }
+                 data1 = await editarOferta(obj, usuario.token)
+            }else{
+                let obj = {
+                    "quantity":offer,
+                    "price":offerData.unitPrice,
+                    "total":(offer) * Number(offerData.unitPrice),
+                    "statusId":1,
+                    "processId":item.id
+                }
+                 data1 = await crearOferta(obj, usuario.token)
             }
-             data1 = await editarOferta(obj, usuario.token)
         }else{
             let obj = {
                 "quantity":offer,
@@ -76,7 +89,12 @@ export default function AlertDialogSlide(props) {
         mostrarNotificacion({ type: data1.status, message: data1.message })
         if(data1.status == 'success'){
             setIscomplete(true)
-
+            if(!props.isEdited){
+                //navigate('/buscador/'+data1.data.processId,{state:{item: null,isNew:false}})
+                window.location.href = '/buscador/'+data1.data.processId
+            }else{
+                props.refresh()
+            }
         }
     }
 

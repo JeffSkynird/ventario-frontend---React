@@ -12,12 +12,32 @@ export const  obtenerTodos = async ({queryKey}) => {
     const { data } = await axios(setting)
     return data;
 };
+export const  obtenerPorId = async (id,token) => {
+    let url = import.meta.env.VITE_API_URL+  `processes/${id}`
+    let setting = {
+        method: "GET",
+        url: url,
+        headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
+    };
+    const { data } = await axios(setting)
+    return data;
+};
 export const  obtenerTodosFiltro = async (obj,token,type,id) => {
     let url = import.meta.env.VITE_API_URL+  `processes/${type}/${id}`
     let setting = {
         method: "GET",
         url: url,
         params: obj,
+        headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
+    };
+    const { data } = await axios(setting)
+    return data;
+};
+export const  obtenerTodosAdmin = async (token) => {
+    let url = import.meta.env.VITE_API_URL+  `processes/`
+    let setting = {
+        method: "GET",
+        url: url,
         headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
     };
     const { data } = await axios(setting)

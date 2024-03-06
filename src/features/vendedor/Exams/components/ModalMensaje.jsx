@@ -44,7 +44,7 @@ export default function AlertDialogSlide(props) {
         mostrarNotificacion({ type: data1.status, message: data1.message })
         if (data1.status == 'success') {
             setIscomplete(true)
-
+            window.location.href = '/buscador/'+data1.data.processId
         }
     }
 
