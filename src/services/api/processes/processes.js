@@ -1,6 +1,20 @@
 import axios from 'axios'
 
 
+
+
+export const  obtenerProcesosPostVisita = async ({queryKey}) => {
+    const [_, token,id] = queryKey
+    let url = import.meta.env.VITE_API_URL+  `processes/post_visita/all/${id}`
+    let setting = {
+        method: "GET",
+        url: url,
+        headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
+    };
+    const { data } = await axios(setting)
+    return data;
+};
+
 export const  obtenerTodos = async ({queryKey}) => {
     const [_, token,type,id] = queryKey
     let url = import.meta.env.VITE_API_URL+  `processes/${type}/${id}`

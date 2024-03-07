@@ -8,39 +8,14 @@ import Link from '@mui/material/Link';
 import { useNavigate } from 'react-router-dom';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import {  obtenerPdf, obtenerPorTag, obtenerTodos } from '../../../services/api/generations/generations';
-import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
-import Modal from './components/Modal';
-import { crear ,eliminar, eliminarPorGeneracion, obtenerTodos as obtenerTags} from '../../../services/api/tags/tags';
+import { obtenerProcesosPostVisita } from '../../../services/api/processes/processes';
 export default function index() {
   const { mostrarNotificacion, cargarUsuario, mostrarLoader, usuario } = useAuth();
   const [selectedTag, setSelectedTag] = useState(0)
-  const { isLoading, isError, data, error , refetch,} = useQuery(['getResults',usuario.token,selectedTag], obtenerTodos)
+  const { isLoading, isError, data, error , refetch,} = useQuery(['getResults',usuario.token,usuario.user.id], obtenerProcesosPostVisita)
   const navigate = useNavigate();
   const [tags, setTags] = useState([])
 
-  React.useEffect(() => {
-    obtenerLista()
-  },[])
-  const eliminarRegistro = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminar(id,usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    obtenerLista()
-  }
-  async function obtenerLista() {
-    const data1 = await obtenerTags(usuario.token)
-    setTags(data1.data)
-  }
-  
- const handleDelete = async (id) => {
-    mostrarLoader(true)
-    const data1 = await eliminarPorGeneracion(id,usuario.token)
-    mostrarLoader(false)
-    mostrarNotificacion(data1)
-    refetch()
- }
- 
   const columns = [
     {
       Header: 'Acciones',
@@ -61,16 +36,16 @@ export default function index() {
     {
       Header: 'Productos',
       accessor: 'tag',
-      Cell: ({ row }) => (<Chip label={row.original.tag} color="primary"/>)
+      Cell: ({ row }) => (<Chip label={row.original.box?.product?.name} color="primary"/>)
 
     },
     {
       Header: 'Fecha',
-      accessor: 'status',
+      accessor: 'createdAt',
     },
     {
       Header: 'Estados',
-      accessor: 'estado',
+      accessor: 'statusId',
     }
    
   ]
@@ -116,7 +91,7 @@ export default function index() {
               <Skeleton height={100} />
             </Box>
           )}
-          {!isLoading && <Table columns={columns} data={!isLoading &&!isError? data.data : []}  />}
+          {!isLoading && <Table columns={columns} data={!isLoading &&!isError? data : []}  />}
 
         </Grid>
       </Grid>
