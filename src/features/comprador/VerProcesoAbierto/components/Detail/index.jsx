@@ -1,10 +1,11 @@
-import { Button, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, Typography } from '@mui/material'
+import { Button, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, Typography, Tooltip } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import InventoryIcon from '@mui/icons-material/Inventory';
 import './style.css'
 import { obtenerTodosFiltro, sendVendorMessage } from '../../../../../services/api/chats/chats';
 import { obtenerTodosFiltro as obtenerCompleto } from '../../../../../services/api/processes/processes';
 import { useNavigate } from 'react-router-dom';
+import InfoIcon from '@mui/icons-material/Info';
 import RefreshIcon from '@mui/icons-material/Refresh';
 export default function index(props) {
     const { item } = props
@@ -49,22 +50,23 @@ export default function index(props) {
         const data = await obtenerTodosFiltro(props.token, props.processID)
         setMessages(data)
     }
-    
+
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
     };
     const sendMessage = async () => {
 
         const obj = {
-            "emisorId":props.userId,
-            "receptorId":props.customerId,
-            "typeId":2,
-            "message":inputValue,
-            "processId":props.processID
+            "emisorId": props.userId,
+            "receptorId": props.customerId,
+            "typeId": 2,
+            "message": inputValue,
+            "processId": props.processID
         }
-       const data = await sendVendorMessage(obj, props.token)
-        if(data.status=="success"){
+        const data = await sendVendorMessage(obj, props.token)
+        if (data.status == "success") {
             refreshSearch()
+            setInputValue("")
         }
     }
     const handleSendMessage = () => {
@@ -137,11 +139,19 @@ export default function index(props) {
                 </Grid>
             </Grid>
             <Grid item xs={6}>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography style={{ fontWeight: 'bold' }}>Mensajes</Typography>
-                    <IconButton aria-label="delete" onClick={refreshSearch}>
-                        <RefreshIcon />
-                    </IconButton>
+                    <div>
+                        <Tooltip title="Los mensajes enviados aparecerán al autorizarse">
+                            <IconButton aria-label="delete" onClick={refreshSearch}>
+                                <InfoIcon />
+                            </IconButton>
+                        </Tooltip>
+
+                        <IconButton aria-label="delete" onClick={refreshSearch}>
+                            <RefreshIcon />
+                        </IconButton>
+                    </div>
                 </div>
                 <div className="chat-container">
                     <div className="chat-messages">

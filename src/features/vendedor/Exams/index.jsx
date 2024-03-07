@@ -278,7 +278,7 @@ export default function index(props) {
         )}
         {(!state?.isNew && productInfo != null) && (
           <Grid item xs={12} >
-            <Detail item={productInfo} token={usuario.token} processID={id} userId={usuario.user.id} />
+            <Detail item={productInfo} token={usuario.token} processID={id} userId={usuario.user.id} customerId={state.item?.box?.bodega?.company?.users[0]?.id} />
 
           </Grid>
         )}

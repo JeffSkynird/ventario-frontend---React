@@ -1,8 +1,9 @@
-import { Button, Grid, IconButton, Paper, Typography } from '@mui/material'
+import { Button, Grid, IconButton, Paper, Tooltip, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import './style.css'
 import { obtenerTodosFiltro, sendClientMessage } from '../../../../../services/api/chats/chats';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import InfoIcon from '@mui/icons-material/Info';
 
 export default function index(props) {
     const {item} = props
@@ -53,6 +54,7 @@ export default function index(props) {
        const data = await sendClientMessage(obj, props.token)
         if(data.status=="success"){
             refreshSearch()
+            setInputValue("")
         }
     }
     const handleSendMessage = () => {
@@ -128,9 +130,17 @@ export default function index(props) {
                 <Paper style={{padding:10}}>
                 <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                     <Typography style={{ fontWeight: 'bold' }}>Mensajes</Typography>
-                    <IconButton aria-label="delete" onClick={refreshSearch}>
-                        <RefreshIcon />
-                    </IconButton>
+                    <div>
+                        <Tooltip title="Los mensajes enviados aparecerán al autorizarse">
+                            <IconButton aria-label="delete" onClick={refreshSearch}>
+                                <InfoIcon />
+                            </IconButton>
+                        </Tooltip>
+
+                        <IconButton aria-label="delete" onClick={refreshSearch}>
+                            <RefreshIcon />
+                        </IconButton>
+                    </div>
                 </div>
                     <div className="chat-container">
                         <div className="chat-messages">
