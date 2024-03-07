@@ -10,6 +10,7 @@ import {
 import { ReactQueryDevtools } from 'react-query/devtools'
 import Drawer from './components/drawer/Drawer'
 import db from "../firebase";
+import PushNotification from './components/notification/PushNotification';
 
 const queryClient = new QueryClient()
 
@@ -19,8 +20,10 @@ function App() {
     <BrowserRouter>
       <Store>
         <Theme>
+        <Notification />
+
           <QueryClientProvider client={queryClient}>
-            <Notification />
+            <PushNotification />
             <Drawer>
               <Router />
             </Drawer>
