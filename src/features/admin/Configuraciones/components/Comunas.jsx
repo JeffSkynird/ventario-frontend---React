@@ -56,6 +56,10 @@ export default function index() {
 
     },
     {
+      Header: 'Región',
+      Cell: ({ row }) => (<span >{row.original.regione?.region}</span>)
+    },
+    {
       Header: 'Estado',
       accessor: 'status',
       Cell: ({ row }) => (<Chip label={row.original.status ? "Activo" : "Inactivo"} color="primary" />)
@@ -77,17 +81,18 @@ export default function index() {
       Bodegas
     </Typography>,
   ];
-  const crearComuna= async (name,id) => {
+  const crearComuna= async (obj) => {
     mostrarLoader(true)
-    const obj = {
-        "id": id,
-        "comuna": name,
+    const objFinal = {
+        "id": obj.id,
+        "comuna": obj.name,
+        "regionId": obj.regionId
     }
     let data1;
     if(open.item!=null){
-      data1 = await editar(obj, usuario.token)
+      data1 = await editar(objFinal, usuario.token)
     }else{
-      data1 = await crear(obj, usuario.token)
+      data1 = await crear(objFinal, usuario.token)
     }
     mostrarLoader(false)
     mostrarNotificacion(data1)

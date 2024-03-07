@@ -14,7 +14,8 @@ import { useLocation } from 'react-router-dom';
 import Detail from './components/Detail'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { obtenerTodosFiltro } from '../../../services/api/bodegas/bodegas';
-import { editar } from '../../../services/api/products/products';
+import { obtenerTodosFiltro as obtenerIndustrias } from '../../../services/api/industrias/industrias'
+import { editar, eliminar } from '../../../services/api/products/products';
 import { storage } from '../../../../firebase'; // Ruta a tu archivo firebase.js
 
 export default function index(props) {
@@ -44,6 +45,8 @@ export default function index(props) {
   const [ventaMinima, setVentaMinima] = React.useState('');
   const [resticcion, setRestriccion] = React.useState('');
 
+  const [industria, setIndustria] = React.useState('');
+  const [industriaData, setIndustriaData] = React.useState([]);
   React.useEffect(() => {
     if (state.item) {
       setBodega(state.item.boxes[0]?.bodega?.id)
@@ -56,10 +59,13 @@ export default function index(props) {
       setPrecio(state.item.unitPrice)
       setVentaMinima(state.item.minimumSale)
       setRestriccion(state.item.restriction)
+      setIndustria(state.item.industryId)
       setImages(state.item.boxes[0]?.boxImages)
       async function fetching() {
         const data = await obtenerTodosFiltro(usuario.token)
+        const data2 = await obtenerIndustrias(usuario.token)
         setBodegas(data)
+        setIndustriaData(data2)
       }
       fetching()
     }
@@ -102,7 +108,7 @@ export default function index(props) {
     }
   };
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     //SUBIR IMAGENES
     mostrarLoader(true)
     let imagesTemp = [...images];
@@ -118,20 +124,21 @@ export default function index(props) {
       "id": state.item.id,
       "codEmp": codigoEmpresa,
       "codVentario": codigoVentario,
-      "name":state.item.name,
+      "name": state.item.name,
       "description": descripcionItem,
       "totalUnits": unidadesTotales,
       "unitPrice": precio,
       "minimumSale": ventaMinima,
       "restriction": resticcion,
+      "industryId": industria,
       "box":
-        {
-          "boxId": state.item.boxes[0]?.id,
-          "bodegaId": bodega,
-          "armado": armado,
-          "porArmar": porArmar,
-          "boxImages": imagesTemp
-        }
+      {
+        "boxId": state.item.boxes[0]?.id,
+        "bodegaId": bodega,
+        "armado": armado,
+        "porArmar": porArmar,
+        "boxImages": imagesTemp
+      }
     }
     const dt = await editar(obj, usuario.token)
     mostrarLoader(false)
@@ -140,17 +147,18 @@ export default function index(props) {
       navigate('/productos')
     }
   }
+
   const handleCapture = (event) => {
-    const files = Array.from(event.target.files); 
+    const files = Array.from(event.target.files);
     console.log(files)
     if (files.length > 0) {
       console.log("AQUI")
-      let newImages= [...images]
+      let newImages = [...images]
       files.forEach((file) => {
         console.log(file)
-        if (file ) {
+        if (file) {
           //newImages = [...images, { url: URL.createObjectURL(file) }]
-          newImages.push({ url: URL.createObjectURL(file),raw:file })
+          newImages.push({ url: URL.createObjectURL(file), raw: file })
 
         }
       })
@@ -177,6 +185,16 @@ export default function index(props) {
     let newImages = images.filter((e, i) => i !== index)
     setImages(newImages)
   }
+
+  const deleteProduct = async () => {
+    mostrarLoader(true)
+    const dt = await eliminar(state.item.id, usuario.token)
+    mostrarLoader(false)
+    mostrarNotificacion({ type: dt.status, message: dt.message })
+    if (dt.status === 'success') {
+      navigate('/productos')
+    }
+  }
   return (
     <Grid container spacing={2} >
       <Modal open={open} setOpen={setOpen} />
@@ -190,7 +208,7 @@ export default function index(props) {
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
             startIcon={<DeleteIcon />}
-            onClick={() => setOpen(true)}
+            onClick={deleteProduct}
             variant="outlined"
             color="error"
           >
@@ -346,7 +364,22 @@ export default function index(props) {
           onChange={(e) => setRestriccion(e.target.value)}
         />
       </Grid>
-
+      <Grid item xs={12}>
+        <FormControl fullWidth >
+          <InputLabel id="demo-simple-select-label">Industria</InputLabel>
+          <Select
+            defaultValue=""
+            label={"Industria"}
+            value={industria}
+            onChange={(e) => setIndustria(e.target.value)}
+          >
+            <MenuItem value={""}>Selecciona una industria</MenuItem>
+            {industriaData.map((item, index) => (
+              <MenuItem key={index} value={item.id}>{item.industry}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
 
     </Grid>
   )
