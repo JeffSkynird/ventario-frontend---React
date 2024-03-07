@@ -9,6 +9,8 @@ import {
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import Drawer from './components/drawer/Drawer'
+import db from "../firebase";
+
 const queryClient = new QueryClient()
 
 function App() {

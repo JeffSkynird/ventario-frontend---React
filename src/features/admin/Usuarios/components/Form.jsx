@@ -10,13 +10,14 @@ import { obtenerTodosFiltro as obtenerEmpresas } from '../../../../services/api/
 
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-
+import { storage } from '../../../../../firebase'; // Ruta a tu archivo firebase.js
 
 import { useEffect } from 'react';
 export default function Form(props) {
     const { state } = useLocation();
     const { mostrarLoader, mostrarNotificacion, usuario } = useAuth()
     const [borndate, setBorndate] = useState(new Date())
+    const [image, setImage] = useState(null)
     const [showPassword, setShowPassword] = useState(false)
     const [roles, setRoles] = useState([]);
     const [empresas, setEmpresas] = useState([]);
@@ -24,7 +25,11 @@ export default function Form(props) {
         mode: 'onChange', defaultValues: state
     });
     useEffect(() => {
-        console.log(state)
+        if (state) {
+            console.log("AQUI")
+            console.log(state)
+            setImage({ url: state.avatar })
+        }
         const funcion = async () => {
             const data = await obtenerTodos(usuario.token)
             const data2 = await obtenerEmpresas(usuario.token)
@@ -76,6 +81,10 @@ export default function Form(props) {
             return
         }
         mostrarLoader(true)
+        if (image.raw) {
+            let url = await handleFileUpload(image.raw, state ? state.avatar : null);
+            dt.avatar = url;
+        }
         let data;
         if (state) {
             data = await editar(dt, usuario.token)
@@ -111,13 +120,55 @@ export default function Form(props) {
                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
     };
+    /*   const handleCapture = (event) => {
+          const file = event.target.files[0]; 
+          if (file) {
+              setValue("avatar", "https://mui.com/static/images/avatar/3.jpg");
+          }
+      } */
     const handleCapture = (event) => {
-        const file = event.target.files[0]; // Obtener el primer archivo seleccionado por el usuario
+        const file = event.target.files[0]
+        let newImage;
         if (file) {
-            //setValue("avatar", URL.createObjectURL(file));
-            setValue("avatar", "https://mui.com/static/images/avatar/3.jpg");
+            //newImages = [...images, { url: URL.createObjectURL(file) }]
+            newImage = { url: URL.createObjectURL(file), raw: file }
         }
+        setImage(newImage)
     }
+
+    const handleFileUpload = async (file, currentUrl) => {
+        try {
+            const storageRef = storage.ref();
+            const boxesRef = storageRef.child('/Avatars'); // Ruta de la carpeta "Avatars"
+
+            // Eliminar la imagen actual si existe
+            if (currentUrl) {
+                try {
+                    const imageRef = storage.refFromURL(currentUrl);
+                    if (imageRef){
+                        await imageRef.delete();
+                        console.log("Imagen anterior eliminada exitosamente");
+                    }
+                } catch (error) {
+                    console.error("Error al eliminar la imagen anterior:", error);
+                }
+            }
+
+            // Subir el nuevo archivo
+            const fileRef = boxesRef.child(file.name); // Referencia al archivo en la carpeta "Avatars"
+            await fileRef.put(file);
+            console.log("Archivo subido exitosamente");
+
+            // Obtener la URL del nuevo archivo guardado
+            const url = await fileRef.getDownloadURL();
+            console.log("URL del archivo:", url);
+            return url;
+        } catch (error) {
+            console.error("Error al subir el archivo:", error);
+            return null;
+        }
+    };
+
     return (
         <Grid container spacing={2} >
             <Grid item xs={12}>
@@ -133,7 +184,7 @@ export default function Form(props) {
                     Subir Avatar
                     <input onChange={handleCapture} style={{ visibility: 'hidden', whiteSpace: 'nowrap', width: 0, overflow: 'hidden', }} type="file" name="" id="" />
                 </Button>
-                <Avatar sx={{ width: 56, height: 56 }} alt="Remy Sharp" src={getValues("avatar")} />
+                <Avatar sx={{ width: 56, height: 56 }} alt="Remy Sharp" src={image?.url} />
             </Grid>
             <Grid item xs={12}>
                 <TextField
@@ -184,7 +235,7 @@ export default function Form(props) {
                     name="email"
                 />
             </Grid>
-            
+
             <Grid item xs={12}>
                 <FormControl fullWidth error={Boolean(errors.companyId)}>
                     <InputLabel id="level-label">Empresa</InputLabel>

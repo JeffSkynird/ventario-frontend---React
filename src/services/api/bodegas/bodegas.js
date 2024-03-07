@@ -13,6 +13,18 @@ export const  obtenerTodos = async ({queryKey}) => {
     console.log(data)
     return data;
 };
+
+export const  obtenerTodosFiltro = async (token) => {
+    let url = import.meta.env.VITE_API_URL+ "bodegas"
+    let setting = {
+        method: "GET",
+        url: url,
+        headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
+    };
+    const { data } = await axios(setting)
+    console.log(data)
+    return data;
+};
 export const crear = async (obj,token ) => {
     let url = import.meta.env.VITE_API_URL+ "bodegas"
     let setting = {

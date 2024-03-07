@@ -33,19 +33,16 @@ export default function index() {
   },
   {
     Header: 'Empresa',
-    Cell: ({ row }) => (<span>Empresa 1</span>)
+    Cell: ({ row }) => (<span>{row.original?.boxes[0]?.bodega?.company?.razonSocial}</span>)
 
   },
   {
     Header: 'Bodega',
-    Cell: ({ row }) => (<span>Bodega 1</span>)
-
+    Cell: ({ row }) => (<span>{row.original?.boxes[0]?.bodega?.address}</span>)
   },
   {
     Header: 'Cod Emp',
-    Cell: ({ row }) => (<span>Cod Emp: 1</span>)
-
-
+    accessor: 'codEmp',
   },
   {
     Header: 'Cod Ventario',
@@ -56,25 +53,20 @@ export default function index() {
     accessor: 'description',
   },
   {
-    Header: 'Kilos',
+    Header: 'Unidades totales',
     accessor: 'totalUnits',
   },
   {
     Header: 'Armado',
-    Cell: ({ row }) => (<span>10</span>)
+    Cell: ({ row }) => (<span>{row.original?.boxes[0]?.armado}</span>)
   },
   {
     Header: 'Por armar',
-    accessor: 'created_at',
+    Cell: ({ row }) => (<span>{row.original?.boxes[0]?.porArmar}</span>)
   },
   {
     Header: 'Precio',
     accessor: 'unitPrice',
-  },
-  {
-    Header: 'Oferta S/N',
-    Cell: ({ row }) => (<Chip label={"S"} color="primary" />)
-
   },
   {
     Header: 'Imagen',
