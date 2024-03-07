@@ -1,6 +1,6 @@
 import {
     CARGAR_USUARIO,
-    LOGOUT,MOSTRAR_NOTIFICACION,MOSTRAR_LOADER,ACTIVAR_OSCURO
+    LOGOUT,MOSTRAR_NOTIFICACION,MOSTRAR_LOADER,ACTIVAR_OSCURO, ENVIAR_PULSO
   } from "../actions/Actions";
   
   export default (state, action) => {
@@ -15,6 +15,8 @@ import {
             return { ...state, loader: action.payload ,};
         case ACTIVAR_OSCURO:
             return { ...state, darkMode: action.payload ,};
+        case ENVIAR_PULSO:
+            return { ...state, pulso: action.payload ,};
         default:
             return state;
     }

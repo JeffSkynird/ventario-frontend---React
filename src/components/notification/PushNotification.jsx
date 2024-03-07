@@ -1,26 +1,32 @@
-// Tu componente PushNotification
-
 import React, { useContext, useEffect, useState } from 'react';
 import Initializer from '../../store/Initializer';
-import { onMessageListener, requestPermission } from '../../../firebase';
+import { messaging, onMessageListener, requestPermission } from '../../../firebase';
 
-export default function PushNotification() {
-  const { mostrarNotificacion } = useContext(Initializer);
+const PushNotification = () => {
+    const { mostrarNotificacion,enviarPulso } = useContext(Initializer);
+    const [notification, setNotification] = useState({ title: '', body: '' });
 
-  useEffect(() => {
-    async function setupMessaging() {
-      await requestPermission();
-      const unsubscribe = await onMessageListener();
-      return unsubscribe;
-    }
-    setupMessaging();
+    useEffect(() => {
+        const setupNotificationListener = async () => {
+            try {
+                await requestPermission();
+                const payload = await onMessageListener();
+                mostrarNotificacion({ type: 'info', message: payload.notification.body });
+                enviarPulso(true);
+                setNotification(payload.notification);
+            } catch (error) {
+                console.error('Error en el manejo de notificaciones:', error);
+            }
+        };
 
-    return () => {
-      // Limpiar cualquier suscripción cuando el componente se desmonte
-    };
-  }, []);
+        setupNotificationListener();
 
-  return (
-    <div></div>
-  );
-}
+        return () => {
+            // Cleanup function
+        };
+    }, [mostrarNotificacion]);
+
+    return null; // No renderizamos nada en este componente, solo maneja las notificaciones
+};
+
+export default PushNotification;

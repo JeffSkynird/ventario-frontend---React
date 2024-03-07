@@ -4,12 +4,12 @@ import Reducer from "./reducer/Reducer";
 import Propager from "./Propager";
 import {
   CARGAR_USUARIO,
-  LOGOUT,MOSTRAR_NOTIFICACION,MOSTRAR_LOADER,ACTIVAR_OSCURO
+  LOGOUT,MOSTRAR_NOTIFICACION,MOSTRAR_LOADER,ACTIVAR_OSCURO,ENVIAR_PULSO
 } from "./actions/Actions";
 const Store = (props) => {
 
   const initialState = {
-    usuario: null,notificacion:null,loader:false,darkMode:false
+    usuario: null,notificacion:null,loader:false,darkMode:false,pulso:false
   };
   const [state, dispatch] = useReducer(Reducer, initialState);
 
@@ -43,17 +43,25 @@ const Store = (props) => {
     });
   }
 
+ const enviarPulso = (data) => {
+    dispatch({
+      type: ENVIAR_PULSO,
+      payload: data,
+    });
+  }
   return (
     <Initializer.Provider
       value={{
         darkMode: state.darkMode,
         usuario: state.usuario,
         notificacion: state.notificacion,
-        mostrarNotificacion,
+        pulso:state.pulso,
         loader: state.loader,
+        mostrarNotificacion,
         mostrarLoader,
         cargarUsuario,
         activarOscuro,
+        enviarPulso,
         logout
       }}
     >

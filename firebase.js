@@ -27,6 +27,7 @@ export const requestPermission = async () => {
         vapidKey: 'BIRaNEWZJdsHl2h5yUEZjrys3aBl89Ww9oNftYN8xu389WPtT7zLZ7yhMlNh4n5sjMgCRAKEBl-Hv1j21extVEw'
       });
       console.log('Token => ', token);
+      sessionStorage.setItem('token-notification', token);
     } else {
       console.log('Unable to get permission to notify.');
     }

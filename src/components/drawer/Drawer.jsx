@@ -43,7 +43,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 
 function ResponsiveDrawer(props) {
-  const { mostrarNotificacion, usuario, mostrarLoader, logout, activarOscuro, darkMode } = useAuth();
+  const { mostrarNotificacion, usuario, mostrarLoader, logout, activarOscuro, darkMode, pulso } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { window } = props;
@@ -66,7 +66,7 @@ function ResponsiveDrawer(props) {
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: 10, marginTop: 20 }}>
           {/* <img src={logo} alt="google" width={'80%'}/> */}
-          <img src={usuario.user?.avatar} alt="" style={{ width: 80,borderRadius: 50}} />
+          <img src={usuario.user?.avatar} alt="" style={{ width: 80, borderRadius: 50 }} />
           {/* <Typography variant='body2'>Bienvenido, <span style={{fontWeight:'bold',color:'#5E35B1'}}>Jefferson</span> </Typography> */}
         </div>
         <List>
@@ -219,6 +219,9 @@ function ResponsiveDrawer(props) {
     activarOscuro(!darkMode)
 
   }
+  const gotToNotificationPanel = () => {
+    navigate('/notificaciones')
+  }
   return (
     <Box sx={{
       display: { sm: 'flex' }
@@ -244,18 +247,20 @@ function ResponsiveDrawer(props) {
             <MenuIcon />
           </IconButton>
           <div>
-            <Typography variant="h6" noWrap component="div" color="primary" sx={{textTransform:'uppercase'}}>
-              {usuario?.user?.type }
+            <Typography variant="h6" noWrap component="div" color="primary" sx={{ textTransform: 'uppercase' }}>
+              {usuario?.user?.type}
             </Typography>
             <Typography variant="body2" color="initial" sx={{ color: 'gray' }}>Sistema en desarrollo</Typography>
           </div>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 
           </Typography>
-
-          <IconButton aria-label="delete" >
-            <NotificationsNoneIcon />
+          <IconButton aria-label="delete" onClick={gotToNotificationPanel} >
+            <Badge color="secondary" variant="dot" invisible={!pulso}>
+              <NotificationsNoneIcon />
+            </Badge>
           </IconButton>
+
           <IconButton aria-label="delete" onClick={changeColor}>
             {darkMode ? <DarkModeIcon /> : <LightModeIcon />}
           </IconButton>

@@ -43,7 +43,7 @@ export default function Login() {
     mostrarLoader(true)
     try {
       let obj = {
-        email: dt.email, password: dt.password
+        email: dt.email, password: dt.password, notificationToken: sessionStorage.getItem('token-notification')
       }
       const data = await iniciarSesion(obj)
       mostrarLoader(false)

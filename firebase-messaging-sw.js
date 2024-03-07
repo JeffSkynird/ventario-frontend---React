@@ -1,6 +1,7 @@
-importScripts('https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/7.14.6/firebase-messaging.js');
- 
+importScripts('https://www.gstatic.com/firebasejs/9.5.0/firebase-app-compat.js')
+importScripts(
+  'https://www.gstatic.com/firebasejs/9.5.0/firebase-messaging-compat.js'
+)
 firebase.initializeApp({
     apiKey: "AIzaSyA-JjuLx6ysUZ923jFYEkTe6jjR1Fdiafo",
   authDomain: "ventario-936b3.firebaseapp.com",
