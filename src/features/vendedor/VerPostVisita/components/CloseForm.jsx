@@ -4,9 +4,6 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useQuery } from 'react-query';
 import { useEffect } from 'react';
-import { obtenerTodos } from '../../../../services/api/pacients/pacients';
-import { obtener } from '../../../../services/api/exams/exams';
-import { obtenerResultadosId } from '../../../../services/api/generations/generations';
 import { Box } from '@mui/system';
 import { editar } from '../../../../services/api/results/results';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -293,7 +290,7 @@ export default function Form(props) {
                     </Grid>
                     <Grid item xs={12} md={11}>
 
-                        <TextField
+                {/*         <TextField
                             id=""
                             type="date"
                             sx={{ width: '100%' }}
@@ -302,19 +299,19 @@ export default function Form(props) {
                             value={'10/10/2022'}
                         //onChange={}
 
-                        />
+                        /> */}
                         <Grid item xs={12}>
                             <LocalizationProvider dateAdapter={AdapterDateFns}   >
                                 <DatePicker
-                                    label="Fecha de nacimiento  "
+                                    label="Fecha de carga  "
                                   /*   value={borndate}
                                     onChange={(newValue) => {
                                         setBorndate(newValue);
                                     }} */
                                     name="born_date"
-                                    disableFuture
+                                  
                                     inputFormat="dd/MM/yyyy"
-                                    renderInput={(params) => <TextField style={{ width: '100%' }}  {...params} />}
+                                    renderInput={(params) => <TextField   size="small" style={{ width: '100%' }}  {...params} />}
                                 />
                             </LocalizationProvider>
                         </Grid>

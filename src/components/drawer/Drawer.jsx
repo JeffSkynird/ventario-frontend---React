@@ -73,7 +73,7 @@ function ResponsiveDrawer(props) {
           {usuario.user.type == "Comprador" && (
             <ListItem disablePadding>
               <ListItemButton onClick={() => navigate("/post_visita")}>
-                <Badge badgeContent={1} color="error" invisible={!location.pathname.includes("/post_visita")} style={{ width: '100%' }}>
+                <Badge  variant="dot" color="error" invisible={!location.pathname.includes("/post_visita")} style={{ width: '100%' }}>
 
                   <Box style={{ padding: 5, borderRadius: 9, width: '100%', color: location.pathname.includes("/post_visita") ? '#2699fb' : 'white', backgroundColor: location.pathname.includes("/post_visita") ? 'white' : 'transparent' }}>
 

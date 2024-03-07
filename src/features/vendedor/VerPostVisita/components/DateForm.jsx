@@ -6,7 +6,6 @@ import { useQuery } from 'react-query';
 import { useEffect } from 'react';
 import { obtenerTodos } from '../../../../services/api/pacients/pacients';
 import { obtener } from '../../../../services/api/exams/exams';
-import { obtenerResultadosId } from '../../../../services/api/generations/generations';
 import { Box } from '@mui/system';
 import { editar } from '../../../../services/api/results/results';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -67,16 +66,7 @@ export default function Form(props) {
             setInputValue("");
         }
     };
-    useEffect(() => {
-        if (state) {
-            async function fetchData() {
-                const data = await obtenerResultadosId(state.id, usuario.token)
-                setDatos(data.data)
-            }
-            fetchData()
-        }
-    }
-        , [state])
+
 
     const convertBase64 = (file) => {
         return new Promise((resolve, reject) => {
