@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useAuth } from '../../../hooks/useAuth';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { Box, Breadcrumbs, Button, Chip, Grid, IconButton, Pagination, Paper, Skeleton, Tab, Tabs, Typography, useMediaQuery } from '@mui/material';
+import { Box, Breadcrumbs, Button, Chip, Grid, IconButton, Pagination, Paper, Rating, Skeleton, Tab, Tabs, Typography, useMediaQuery } from '@mui/material';
 import Link from '@mui/material/Link';
 import { useNavigate, useParams } from 'react-router-dom';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -12,7 +12,7 @@ import ModalMensaje from './components/ModalMensaje'
 import { useLocation } from 'react-router-dom';
 import Detail from './components/Detail'
 import { useTheme } from '@emotion/react';
-import { obtenerTodosVendedorPagina } from '../../../services/api/products/products';
+import { editarEstrellas, obtenerTodosVendedorPagina } from '../../../services/api/products/products';
 import { obtenerPorId } from '../../../services/api/processes/processes';
 export default function index(props) {
   const [page, setPage] = useState(1);
@@ -36,6 +36,8 @@ export default function index(props) {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down('sm'));
   const [productsRelated, setProductsRelated] = useState([])
+  const [ratingValue, setRatingValue] = React.useState(0);
+
   useEffect(() => {
     console.log("AQUI")
     console.log(state)
@@ -57,9 +59,9 @@ export default function index(props) {
           setImage4(state.item.image4)
           setImage5(state.item.image5)
           searchRelatedProducts(1)
-        }else {
+        } else {
           setActiveImage(state.item?.boxes[0]?.images[0]?.url)
-          
+
           setImage2(state.item?.boxes[0]?.images[1]?.url)
           setImage3(state.item?.boxes[0]?.images[2]?.url)
           setImage4(state.item?.boxes[0]?.images[3]?.url)
@@ -70,7 +72,7 @@ export default function index(props) {
       } else {
         refreshSearch();
       }
-    }else {
+    } else {
       refreshSearch();
     }
   }, [state])
@@ -84,10 +86,11 @@ export default function index(props) {
     setImage5(dat[0]?.box?.boxImages[4]?.url)
     setProductInfo(dat[0])
     setProductObj(dat[0]?.box?.product)
+    setRatingValue(dat[0]?.box?.product?.averageGrade)
   }
 
   const searchRelatedProducts = async (pageValue) => {
-    if(state.item.vendedorId){
+    if (state.item.vendedorId) {
       const data = await obtenerTodosVendedorPagina(usuario.token, { vendorId: state.item.vendedorId, current: state.item.id }, pageValue)
       console.log(data)
       setProductsRelated(data)
@@ -132,20 +135,26 @@ export default function index(props) {
   console.log(productInfo)
   console.log("SEXO")
   console.log(state)
+  const updatestars = async (value) => {
+    mostrarLoader(true)
+    const dat = await editarEstrellas({id:productObj?.id,stars:value}, usuario.token);
+    mostrarLoader(false)
+    mostrarNotificacion({ type:dat.status, message: dat.message })
+  }
   return (
     <div>
 
       <Grid container spacing={2} >
-      {
-        productInfo != null && (
-          <>
-            <Modal isEdited={!state?.isNew} open={open} setOpen={setOpen} item={productInfo} refresh={refreshSearch} />
-            <ModalVisita isEdited={!state?.isNew} open={open2} setOpen={setOpen2} item={productInfo} refresh={refreshSearch} />
-            <ModalMensaje open={open3} setOpen={setOpen3} item={productInfo} />
+        {
+          productInfo != null && (
+            <>
+              <Modal isEdited={!state?.isNew} open={open} setOpen={setOpen} item={productInfo} refresh={refreshSearch} />
+              <ModalVisita isEdited={!state?.isNew} open={open2} setOpen={setOpen2} item={productInfo} refresh={refreshSearch} />
+              <ModalMensaje open={open3} setOpen={setOpen3} item={productInfo} />
 
-          </>
-        )
-      }
+            </>
+          )
+        }
         <Grid item xs={12}>
           <Typography sx={{ fontWeight: 'bold' }}>Buscador / {productObj?.name}</Typography>
         </Grid>
@@ -181,7 +190,18 @@ export default function index(props) {
                 </div>
                 <div  >
                   <b>{productObj?.name}</b><br />
-                  <span>{productObj?.averageGrade} ★★★★☆ (36)</span><br />
+                  <div style={{display:'flex',}}>
+                    <Typography  color="initial">{ratingValue}</Typography>
+                    <Rating
+                      name="simple-controlled"
+                      disabled={state?.isNew}
+                      value={ratingValue}
+                      onChange={(event, newValue) => {
+                        setRatingValue(newValue);
+                        updatestars(newValue)
+                      }}
+                    />
+                  </div>
                   <span >Cantidad disponible: {productObj?.totalUnits}</span><br />
                   <span>Venta mínima de compra: ${productObj?.minimumSale}</span><br />
                   <span style={{ opacity: 0.8 }}>Comuna: Aríca</span><br />
@@ -234,7 +254,7 @@ export default function index(props) {
 
         </Grid>
 
-        {state?.isNew && productsRelated.length!=0 && (
+        {state?.isNew && productsRelated.length != 0 && (
           <div style={{ padding: 10, marginTop: 10 }}>
 
             <Grid item xs={12} style={{ marginTop: 20, marginBottom: 10 }}>
@@ -247,7 +267,7 @@ export default function index(props) {
                   productsRelated?.data?.map((item, index) => (
                     <Grid item xs={12} md={4}>
                       <div style={style.container} onClick={() => {
-                        navigate('/buscador/' + item.id, { state: {item,isNew:true} })
+                        navigate('/buscador/' + item.id, { state: { item, isNew: true } })
                       }}>
                         <div style={{ display: 'flex' }}>
                           <div style={style.imageContainer}>
@@ -255,7 +275,7 @@ export default function index(props) {
                           </div>
                           <div style={style.detailsContainer}>
                             <b style={style.title}>{item.name}</b><br />
-                            <span>{item.averageGrade} ★★★★☆ (36)</span><br />
+                            <span>{item.averageGrade} ★★★★☆</span><br />
                             <span >Arica Tarapacá</span><br />
                             <span>Tipo Uno</span><br />
                             <span style={{ opacity: 0.8 }}>{item.totalUnits} unidades</span><br />

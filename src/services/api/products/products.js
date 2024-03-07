@@ -24,6 +24,19 @@ export const subirArchivo = async (archivo, token) => {
         throw error;
     }
 };
+
+export const editarEstrellas = async (obj,token) => {
+    let url = import.meta.env.VITE_API_URL+ "products/update/stars/"+obj.id
+    let setting = {
+        method: "PUT",
+        url: url,
+        data: obj,
+        body: obj,
+        headers: { 'Accept': 'application/json' ,'Authorization': `Bearer ${token}`}
+    };
+    const { data } = await axios(setting)
+    return data;
+};
 export const  obtenerTodos = async ({queryKey}) => {
     const [_, token] = queryKey
     console.log("TOKEN")
